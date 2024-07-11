@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Checker</title>
+    <meta name="author" content="Muhammad Usman">
+    <link rel="stylesheet" href="./side/style.css">
+</head>
+
+<body class="bg-[#e4eaf2] text-[#1F2937]">
+    <!-- checkers -->
+    <div class="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-[1fr_2px_1fr] gap-4 p-4 text-sm">
+        <!-- single checker -->
+        <div class="w-full space-y-4">
+            <h3 class="text-xl font-semibold">Single Email Checker</h3>
+            <form action="" class="flex" id="single-email-form">
+                <input name="email" id="single-email" type="email" placeholder="example@example.com"
+                    class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 w-full" minlength="12"
+                    required>
+                <button type="submit"
+                    class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
+            </form>
+        </div>
+
+        <!-- line -->
+        <hr class="w-0.5 h-full hidden md:block text-gray-700 py-4 bg-gray-700">
+
+        <!-- file checker -->
+        <div class="w-full space-y-4">
+            <h3 class="text-xl font-semibold">File Checker</h3>
+            <form action="" class="flex flex-col" id="multiple-email-file">
+                <div class="flex">
+                    <input name="file" id="email-file" type="file"
+                        class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 resize-none w-full"
+                        required>
+                    <button type="submit"
+                        class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- multiple checker -->
+        <div class="col-span-3 space-y-4">
+            <h3 class="text-xl font-semibold">Multiple Email Checker</h3>
+            <form action="" class="space-y-4" id="multiple-email-form">
+                <div class="flex w-full">
+                    <textarea name="email" id="multiple-email"
+                        class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 resize-none w-full"
+                        rows="5" required minlength="28"
+                        placeholder></textarea>
+                    <button type="submit"
+                        class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
+                </div>
+
+                <div class="rounded-md bg-blue-300 flex items-center space-x-2 p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" viewBox="0 0 48 48">
+                        <path fill="#2196f3"
+                            d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
+                        </path>
+                        <path fill="#fff"
+                            d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
+                        </path>
+                    </svg>
+                    <p class="text-blue-600 font-semibold">One Email Per Line</p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <p class="bg-white text-lg p-4 py-2 font-semibold">Results</p>
+
+    <!-- results -->
+    <div class="p-4 text-sm">
+        <div class="flex items-center justify-between border-[#1F2937] border border-b-0 last:border-b bg-white p-2">
+            <div class="px-2">
+                <p class="font-semibold space-x-2.5">
+                    <span id="id">P1231P23IJJ</span>
+                    <span class="hidden sm:inline-block">-</span>
+                    <span id="date">2024:07:09 11:40 am</span>
+                </p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <a href="/"
+                    class="bg-[#1F2937] hover:bg-gray-800 border border-[#1F2937] rounded-md text-white outline-none p-1"
+                    id="details">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
+                        <path fill="#fff"
+                            d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path>
+                        <path fill="#000"
+                            d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
+                        </path>
+                    </svg>
+                </a>
+                <a href="/"
+                    class="bg-[#1F2937] hover:bg-gray-800 border border-[#1F2937] rounded-md text-white outline-none p-1"
+                    id="download">
+                    <img class="rounded-full invert p-0.5 min-w-6 w-6"
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA7AAAAOwBeShxvQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAJESURBVFiFxdfNi01hHAfwzxymMe54i4Tc0rikaCxEakJRaMZGWcqCf0JKEaWmLJCN1OwsZolRLLwspjFsEAs7GS9J8jIz7jSlsTjn1ul075nn3CvzrV/nOec8v+/39/ye9zbhKOEIerEba7ESC/ED7/ACDzGMiQLcuejGDfzCbKBN4SY2tSK8CJcwXUA4azMYSLgKoYyxFoSzNirusiBsxdcA0t84iVOoBtQfR89c4hV8CmzV7ZTfnUCfcaxJC0apcjtuCU/VdKpcDfRZj7vorBfABewMJGoFO3A6+7Gs+GgfSvkPFfSdlGS6loEz6PhXTQxACWdrAXTi+H8Ur+EElkQ4jK55CKCEvggH50G8hv0Rts1jAD0RNgdUfIzl4t1wKqfeJPqxCiMBvN0RFgdUHMbP5NnfIIhJ9OEeviXPubCMsPn/Ubwt17APg6n3QexJvVfwOYB3SkIesni8zwSxokG5Il7zQzmNBFauF0QWRcRnMRrhVQ5hFmXxgKwXRAWPxBtOKMbgaIGIG2Vio2Itr9kxWCo+QDYTRK948DUj/l1qBl5rgqBVuw5tqRS+0XhH/IP78hehNEo4hAUN/lexRTILajifE+1AoHAal3P4LtZz6MDLBg5XmgigUbc+k8p0W8apjKdYl/k+iyfi03IIVmNvHf4v2CWT+ix6hK+OReyDuN+DUBbf8/6V+HP5K2hddOCc1q5mVfGAay8qnkY3rip2OZ0Qz/M5l+XsIMlDFw6Ij3DbsUF8SJlJ7C1e40FiQZeVv9B8oAsh+Fn5AAAAAElFTkSuQmCC"
+                        alt="">
+                </a>
+            </div>
+        </div>
+        <!-- <p class="border-[#1F2937] border border-b-0 last:border-b bg-white p-3 text-center font-semibold text-base" id="no-result">None</p> -->
+    </div>
+
+    <script src="side/dev.js"></script>
+    <script>
+        document.getElementById("multiple-email").placeholder = 
+        "example@example.com\nexample@example.com\nexample@example.com\nexample@example.com\nexample@example.com";
+    </script>
+</body>
+
+</html>

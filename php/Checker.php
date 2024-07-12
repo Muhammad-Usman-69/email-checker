@@ -37,7 +37,7 @@ class Checker
 
     function random_str(
         $length,
-        $keyspace = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        $keyspace = '0123456789'
     ) {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
@@ -106,7 +106,7 @@ class Checker
             $responseData = $response->getBody();
 
             //creating it
-            $id = $this->random_str(10);
+            $id = "check" . $this->random_str(4);
 
             //getting url
             $url = "../v1/json/$id.json";
@@ -184,7 +184,7 @@ class Checker
             }
 
             //creating it
-            $id = $this->random_str(10);
+            $id = "check" . $this->random_str(4);
 
             //getting url
             $url = "../v1/json/$id.json";
@@ -257,10 +257,44 @@ class Checker
         echo $headers;
         echo $rows;
 
-        //creating id
-        $id = $this->random_str(8);
-
         header("content-type: application/csv");
         header("Content-Disposition: attachment; filename=$id.csv");
+        
+        $this->conn->close();
+    }
+
+    function delete($until)
+    {
+        //for checks
+        $sql = "SELECT * FROM `checks` WHERE `time` < ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $until);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $num = $result->num_rows;
+        //if exists
+        if ($num != 0) {
+            while ($row = $result->fetch_assoc()) {
+                //deleting files
+                unlink($row["url"]);
+                //deleting from db
+                $sql = "DELETE FROM `checks` WHERE `check_id` = '{$row["check_id"]}'";
+                $stmt2 = $this->conn->prepare($sql);
+                $stmt2->execute();
+                $stmt2->close();
+            };
+        }
+        $stmt->close(); //closing
+
+        //for tasks
+        $sql = "DELETE FROM `tasks` WHERE `task_time` < ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $until);
+        $stmt->execute();
+        $stmt->close();
+
+        $this->conn->close();
+
+        echo "deleted";
     }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2024 at 11:04 AM
+-- Generation Time: Jul 12, 2024 at 12:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,18 +32,8 @@ CREATE TABLE `checks` (
   `task_id` text NOT NULL,
   `method` text NOT NULL,
   `url` text NOT NULL,
-  `time` text NOT NULL
+  `time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `checks`
---
-
-INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `time`) VALUES
-('09CTY4ZESB', 'none', 'Single', '../v1/json/09CTY4ZESB.json', '2024:07:12 1:56 pm'),
-('7PPQ8IAY2O', 'none', 'Single', '../v1/json/7PPQ8IAY2O.json', '2024:07:12 1:58 pm'),
-('J6SDSO0HYL', '654764', 'Multiple', '../v1/json/J6SDSO0HYL.json', '2024:07:12 1:11 pm'),
-('VWOMWALCF7', 'none', 'Single', '../v1/json/VWOMWALCF7.json', '2024:07:12 2:02 pm');
 
 -- --------------------------------------------------------
 
@@ -53,15 +43,8 @@ INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `time`) VALUES
 
 CREATE TABLE `tasks` (
   `task_id` varchar(100) NOT NULL,
-  `task_time` text NOT NULL
+  `task_time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tasks`
---
-
-INSERT INTO `tasks` (`task_id`, `task_time`) VALUES
-('654764', '2024:07:12 1:11 pm');
 
 --
 -- Indexes for dumped tables

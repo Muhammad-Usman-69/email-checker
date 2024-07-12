@@ -24,4 +24,12 @@ require "Checker.php";
 
 $emails = $_POST["emails"];
 
-echo json_encode($emails);
+$obj = new Checker();
+
+$obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
+$task_id = $obj->multipleCheck($emails, API);
+$obj->saveTask($task_id);
+$result = $obj->getMultipleResults($task_id, API);
+$obj->saveToDb($result["id"], $task_id, "Multiple", $result["url"]);
+
+echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

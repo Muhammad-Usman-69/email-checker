@@ -1,7 +1,12 @@
 <?php
 
-class Checker {
+require_once ("../vendor/autoload.php");
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
+class Checker
+{
     protected $conn;
     protected $error = false;
 
@@ -32,7 +37,7 @@ class Checker {
 
     function random_str(
         $length,
-        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyz'
+        $keyspace = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ) {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
@@ -54,8 +59,9 @@ class Checker {
         }
     }
 
-    function saveToDb($id, $method, $type, $prompt, $url)
+    function saveToDb($id, $task_id, $method, $url)
     {
+
         //stopper
         // return;
 
@@ -64,16 +70,121 @@ class Checker {
         $time = date("Y:m:d g:i a");
 
         try {
-            $sql = "INSERT INTO `prompts` (`id`, `method`, `type`, `prompt`, `url/result`, `time`) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `time`) VALUES (?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("ssssss", $id, $method, $type, $prompt, $url, $time);
+            $stmt->bind_param("sssss", $id, $task_id, $method, $url, $time);
             $stmt->execute();
             $stmt->close();
-            $this->conn->close();
         } catch (Exception $err) {
-            //deleting file
-            unlink($url);
+            echo $err;
             $this->Error("Couldn't save file. Please try later.");
+        }
+    }
+
+    function saveTask($task_id)
+    {
+        // Taking current time
+        date_default_timezone_set("Asia/Karachi");
+        $time = date("Y:m:d g:i a");
+
+        try {
+            $sql = "INSERT INTO `tasks` (`task_id`, `task_time`) VALUES (?, ?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ss", $task_id, $time);
+            $stmt->execute();
+            $stmt->close();
+        } catch (Exception $err) {
+            $this->Error("Couldn't save file. Please try later.");
+        }
+    }
+
+    function singleCheck($email, $apiKey)
+    {
+        $endpoint = "https://emailverifier.reoon.com/api/v1/verify?email=$email&key=$apiKey";
+        $client = new Client();
+
+        try {
+            $response = $client->get($endpoint);
+        } catch (ClientException $err) {
+            $this->Error("Server not responding");
+        }
+    }
+
+    function multipleCheck($emails, $apiKey)
+    {
+        $endpoint = "https://emailverifier.reoon.com/api/v1/create-bulk-verification-task/";
+        $client = new Client();
+
+        try {
+            $response = $client->post($endpoint, [
+                'json' => [
+                    'emails' => $emails,
+                    'key' => $apiKey
+                ]
+            ]);
+
+            //check if success
+            $responseData = $response->getBody();
+            $data = json_decode($responseData);
+            //std class ka kam krna ha
+            if ($data->{"status"} != "success") {
+                $this->Error("Request failed, please try later");
+            }
+
+            //getting task id
+            $task_id = $data->{"task_id"};
+
+            return $task_id;
+        } catch (ClientException $err) {
+            $this->Error("Server not responding");
+        }
+    }
+
+    function getMultipleResults($task_id, $apiKey)
+    {
+        //getting the data
+        $endpoint = "https://emailverifier.reoon.com/api/v1/get-result-bulk-verification-task/?task_id=$task_id&key=$apiKey";
+
+        $client = new Client();
+
+        try {
+            while (true) {
+                $response = $client->get($endpoint);
+                $responseData = $response->getBody();
+    
+                // Decode the JSON response
+                $checkData = json_decode($responseData);
+    
+                // Check if completed
+                $status = $checkData->status;
+
+                if ($status == "completed") {
+                    break; // Exit the loop if the status is "completed"
+                }
+    
+                // Delay before the next check
+                sleep(1); // Wait for 10 seconds before checking again
+            }
+
+            //creating it
+            $id = $this->random_str(10);
+
+            //getting url
+            $url = "../v1/json/$id.json";
+
+            //writing data
+            $fp = fopen($url, "w");
+            fwrite($fp, $responseData);
+            fclose($fp);
+
+            return [
+                "status" => "success",
+                "id" => $id,
+                "url" => $url,
+                "check" => "multiple"
+            ];
+        } catch (ClientException $err) {
+            $this->Error("Server not responding");
         }
     }
 }

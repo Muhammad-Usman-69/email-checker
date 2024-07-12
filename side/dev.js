@@ -66,7 +66,66 @@ async function submitData(endpoint, data) {
         body: data
     });
 
-    let json = await res.text();
-    
-    console.log(json);
+    let json = await res.json();
+
+    loadData(json);
 }
+
+async function loadData(data) {
+    if (data.error != undefined) {
+        console.log(data);
+        return;
+    }
+
+    //showing result
+    let result = document.getElementById("result");
+    result.classList.remove("hidden");
+    document.getElementById("result-check").innerHTML = data["check"];
+
+    //showing data by fetching it
+    let res = await fetch(data["url"]);
+    let json = await res.json();
+
+
+    //showing result only if multiple
+    if (data["check"] == "multiple") {
+        document.getElementById("result-download").classList.remove("hidden");
+        document.getElementById("result-id").innerHTML = data["id"];
+        showMultiple(json);
+        return;
+    }
+
+    showSingle(json);
+}
+
+function showMultiple(data) {
+    console.log(data);
+    const resultEmailCont = document.getElementById("email-cont");
+
+    //taking result
+    let result = data["results"];
+    let emails = Object.keys(result);
+
+    //looping through email
+    emails.forEach(email => {
+        let status = result[email]["status"];
+        if (status == "safe" || status == "valid") {
+            resultEmailCont.innerHTML +=
+                `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border">
+                    <p>${email}</p>
+                    <p class="capitalize">${status}</p>
+                </div>`;
+        } else {
+            resultEmailCont.innerHTML +=
+                `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border">
+                    <p>${email}</p>
+                    <p class="capitalize">${status}</p>
+                </div>`;
+        }
+    })
+}
+
+
+
+
+

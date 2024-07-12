@@ -99,7 +99,6 @@ async function loadData(data) {
 }
 
 function showMultiple(data) {
-    console.log(data);
     const resultEmailCont = document.getElementById("email-cont");
 
     //taking result
@@ -112,17 +111,39 @@ function showMultiple(data) {
         if (status == "safe" || status == "valid") {
             resultEmailCont.innerHTML +=
                 `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border">
-                    <p>${email}</p>
+                    <p class="text-green-700">${email}</p>
                     <p class="capitalize">${status}</p>
                 </div>`;
         } else {
             resultEmailCont.innerHTML +=
                 `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border">
-                    <p>${email}</p>
+                    <p class="text-red-700">${email}</p>
                     <p class="capitalize">${status}</p>
                 </div>`;
         }
     })
+}
+
+function showSingle(data) {
+    const resultEmailCont = document.getElementById("email-cont");
+
+    //taking result and status
+    let email = data["email"];
+    let status = data["status"];
+    
+    if (status == "safe" || status == "valid") {
+        resultEmailCont.innerHTML +=
+            `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border">
+                <p class="text-green-700">${email}</p>
+                <p class="capitalize">${status}</p>
+            </div>`;
+    } else {
+        resultEmailCont.innerHTML +=
+            `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border">
+                <p class="text-red-700">${email}</p>
+                <p class="capitalize">${status}</p>
+            </div>`;
+    }
 }
 
 

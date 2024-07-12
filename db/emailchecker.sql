@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2024 at 10:12 AM
+-- Generation Time: Jul 12, 2024 at 11:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,7 +40,10 @@ CREATE TABLE `checks` (
 --
 
 INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `time`) VALUES
-('J6SDSO0HYL', '654764', 'Multiple', '../v1/json/J6SDSO0HYL.json', '2024:07:12 1:11 pm');
+('09CTY4ZESB', 'none', 'Single', '../v1/json/09CTY4ZESB.json', '2024:07:12 1:56 pm'),
+('7PPQ8IAY2O', 'none', 'Single', '../v1/json/7PPQ8IAY2O.json', '2024:07:12 1:58 pm'),
+('J6SDSO0HYL', '654764', 'Multiple', '../v1/json/J6SDSO0HYL.json', '2024:07:12 1:11 pm'),
+('VWOMWALCF7', 'none', 'Single', '../v1/json/VWOMWALCF7.json', '2024:07:12 2:02 pm');
 
 -- --------------------------------------------------------
 

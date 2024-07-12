@@ -105,6 +105,25 @@ class Checker
 
         try {
             $response = $client->get($endpoint);
+            $responseData = $response->getBody();
+
+            //creating it
+            $id = $this->random_str(10);
+
+            //getting url
+            $url = "../v1/json/$id.json";
+
+            //writing data
+            $fp = fopen($url, "w");
+            fwrite($fp, $responseData);
+            fclose($fp);
+
+            return [
+                "status" => "success",
+                "id" => $id,
+                "url" => $url,
+                "check" => "single"
+            ];
         } catch (ClientException $err) {
             $this->Error("Server not responding");
         }
@@ -126,7 +145,7 @@ class Checker
             //check if success
             $responseData = $response->getBody();
             $data = json_decode($responseData);
-            //std class ka kam krna ha
+            
             if ($data->{"status"} != "success") {
                 $this->Error("Request failed, please try later");
             }

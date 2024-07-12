@@ -53,7 +53,7 @@ document.getElementById("multiple-email-file").addEventListener("submit", (e) =>
     let formData = new FormData();
     formData.append("file", input);
     //clearing file
-    // document.getElementById("email-file").value = "";
+    document.getElementById("email-file").value = "";
     //declaring endpoint
     let endpoint = "../php/filemail.php";
     //submitting data
@@ -130,7 +130,7 @@ function showSingle(data) {
     //taking result and status
     let email = data["email"];
     let status = data["status"];
-    
+
     if (status == "safe" || status == "valid") {
         resultEmailCont.innerHTML +=
             `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border">

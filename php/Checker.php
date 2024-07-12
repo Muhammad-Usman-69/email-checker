@@ -182,7 +182,7 @@ class Checker
                 }
     
                 // Delay before the next check
-                sleep(1); // Wait for 10 seconds before checking again
+                sleep(1); // Wait for 1 seconds before checking again
             }
 
             //creating it

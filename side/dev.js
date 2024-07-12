@@ -61,6 +61,11 @@ document.getElementById("multiple-email-file").addEventListener("submit", (e) =>
 })
 
 async function submitData(endpoint, data) {
+    //clearing previous data
+    document.getElementById("email-cont").innerHTML = "";
+    document.getElementById("result").classList.add("hidden");
+    document.getElementById("download-form").classList.add("hidden");
+
     let res = await fetch(endpoint, {
         method: "POST",
         body: data
@@ -86,11 +91,13 @@ async function loadData(data) {
     let res = await fetch(data["url"]);
     let json = await res.json();
 
+    
+    document.getElementById("result-id").innerHTML = data["id"];
 
     //showing result only if multiple
     if (data["check"] == "multiple") {
-        document.getElementById("result-download").classList.remove("hidden");
-        document.getElementById("result-id").innerHTML = data["id"];
+        document.getElementById("download-form").classList.remove("hidden");
+        document.getElementById("download-id").value = data["id"];
         showMultiple(json);
         return;
     }
@@ -110,14 +117,14 @@ function showMultiple(data) {
         let status = result[email]["status"];
         if (status == "safe" || status == "valid") {
             resultEmailCont.innerHTML +=
-                `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border">
-                    <p class="text-green-700">${email}</p>
+                `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border text-green-700 font-semibold">
+                    <p>${email}</p>
                     <p class="capitalize">${status}</p>
                 </div>`;
         } else {
             resultEmailCont.innerHTML +=
-                `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border">
-                    <p class="text-red-700">${email}</p>
+                `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border text-red-700 font-semibold">
+                    <p>${email}</p>
                     <p class="capitalize">${status}</p>
                 </div>`;
         }
@@ -132,15 +139,15 @@ function showSingle(data) {
     let status = data["status"];
 
     if (status == "safe" || status == "valid") {
-        resultEmailCont.innerHTML +=
-            `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border">
-                <p class="text-green-700">${email}</p>
+        resultEmailCont.innerHTML =
+            `<div class="flex items-center justify-between rounded-md p-2 bg-green-300 border-green-700 border text-green-700 font-semibold">
+                <p>${email}</p>
                 <p class="capitalize">${status}</p>
             </div>`;
     } else {
-        resultEmailCont.innerHTML +=
-            `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border">
-                <p class="text-red-700">${email}</p>
+        resultEmailCont.innerHTML =
+            `<div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 border text-red-700 font-semibold">
+                <p>${email}</p>
                 <p class="capitalize">${status}</p>
             </div>`;
     }

@@ -88,17 +88,17 @@
             <div class="flex items-center justify-between">
                 <div class="text-base mx-2">
                     <p class="font-semibold space-x-2.5">
-                        <span id="result-id">YZPX4GBZXT</span>
+                        <span id="result-id"></span>
                         <span>-</span>
                         <span id="result-check" class="capitalize"></span>
                     </p>
                 </div>
-                <form action="php/download.php" class="flex items-center space-x-2 hidden" id="result-download">
+                <form action="php/download.php" class="flex items-center space-x-2 hidden" id="download-form" method="post" target="_blank">
                     <select name="select" class="p-1.5 border border-[#1F2937]" required>
                         <option value="all">All</option>
-                        <option value="valid">Valid</option>
+                        <option value="valid">Valid / Safe</option>
                     </select>
-                    <input type="hidden" name="id" value="YZPX4GBZXT">
+                    <input type="hidden" name="id" id="download-id">
                     <button type="submit"
                         class="bg-[#1F2937] hover:bg-gray-800 border border-[#1F2937] rounded-md text-white outline-none p-1"
                         id="download">

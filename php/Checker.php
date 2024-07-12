@@ -61,7 +61,6 @@ class Checker
 
     function saveToDb($id, $task_id, $method, $url)
     {
-
         //stopper
         // return;
 
@@ -76,7 +75,6 @@ class Checker
             $stmt->execute();
             $stmt->close();
         } catch (Exception $err) {
-            echo $err;
             $this->Error("Couldn't save file. Please try later.");
         }
     }
@@ -145,7 +143,7 @@ class Checker
             //check if success
             $responseData = $response->getBody();
             $data = json_decode($responseData);
-            
+
             if ($data->{"status"} != "success") {
                 $this->Error("Request failed, please try later");
             }
@@ -170,17 +168,17 @@ class Checker
             while (true) {
                 $response = $client->get($endpoint);
                 $responseData = $response->getBody();
-    
+
                 // Decode the JSON response
                 $checkData = json_decode($responseData);
-    
+
                 // Check if completed
                 $status = $checkData->status;
 
                 if ($status == "completed") {
                     break; // Exit the loop if the status is "completed"
                 }
-    
+
                 // Delay before the next check
                 sleep(1); // Wait for 1 seconds before checking again
             }
@@ -205,5 +203,64 @@ class Checker
         } catch (ClientException $err) {
             $this->Error("Server not responding");
         }
+    }
+
+    function download($id, $status)
+    {
+        header("content-type: json");
+
+        //check if exist
+        try {
+            $sql = "SELECT * FROM `checks` WHERE `check_id` = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("s", $id);
+            $stmt->execute();
+            $checkResult = $stmt->get_result();
+            $checkRow = $checkResult->num_rows;
+            $resultAssoc = $checkResult->fetch_assoc();
+            $stmt->close();
+
+            if ($checkRow == 0) {
+                $this->Error("No such file exists");
+            }
+        } catch (Exception $err) {
+            $this->Error("Couldn't save file. Please try later.");
+        }
+
+        $json = file_get_contents($resultAssoc["url"]);
+        $data = json_decode($json);
+
+        $headers = "Email,Status\n"; // "," seperate the column
+
+        $stdResult = $data->{"results"};
+
+        //getting object keys
+        $results = get_object_vars($stdResult);
+
+        $rows = "";
+
+        //looping through results
+        foreach ($results as $result) {
+            $email = $result->{"email"};
+            $emailStatus = $result->{"status"};
+            //pushing to rows if all
+            if ($status == "all") {
+                $rows .= "$email,$emailStatus\n";
+            }
+            //pushing safe
+            if (($emailStatus == "safe" || $emailStatus == "valid") && $status != "all") {
+                $rows .= "$email,$emailStatus\n";
+            }
+        }
+
+        //ecohing result
+        echo $headers;
+        echo $rows;
+
+        //creating id
+        $id = $this->random_str(8);
+
+        header("content-type: application/csv");
+        header("Content-Disposition: attachment; filename=$id.csv");
     }
 }

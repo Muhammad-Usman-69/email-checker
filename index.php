@@ -49,7 +49,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 
         <!-- file checker -->
         <div class="w-full space-y-4">
-            <h3 class="text-xl font-semibold">File Checker</h3>
+            <h3 class="text-xl font-semibold">File Checker (Max. limit 100)</h3>
             <form action="" class="flex flex-col" id="multiple-email-file">
                 <div class="flex">
                     <input name="file" id="email-file" type="file"
@@ -63,8 +63,8 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 
         <!-- multiple checker -->
         <div class="col-span-3 space-y-4">
-            <h3 class="text-xl font-semibold">Multiple Email Checker</h3>
-            <form action="" class="space-y-4 md:flex md:space-y-0 md:space-x-4" id="multiple-email-form">
+            <h3 class="text-xl font-semibold">Multiple Email Checker (Max. limit 100)</h3>
+            <form action="" id="multiple-email-form">
                 <div class="flex w-full">
                     <textarea name="email" id="multiple-email"
                         class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 resize-none w-full"
@@ -72,22 +72,21 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
                     <button type="submit"
                         class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
                 </div>
-
-                <div id="info-container">
-                    <div class="rounded-md bg-blue-200 border-blue-700 border flex items-center space-x-2 p-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
-                            <path fill="#2196f3"
-                                d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
-                            </path>
-                            <path fill="#fff"
-                                d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
-                            </path>
-                        </svg>
-                        <p class="text-blue-600 font-semibold">One Email Per Line</p>
-                    </div>
-                </div>
             </form>
 
+            <div id="info-container">
+                <div class="rounded-md bg-blue-200 border-blue-700 border flex items-center space-x-2 p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
+                        <path fill="#2196f3"
+                            d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
+                        </path>
+                        <path fill="#fff"
+                            d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
+                        </path>
+                    </svg>
+                    <p class="text-blue-600 font-semibold">One Email Per Line</p>
+                </div>
+            </div>
         </div>
     </div>
 

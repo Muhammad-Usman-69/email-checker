@@ -1,6 +1,14 @@
 <?php
 
 require_once "../vendor/autoload.php";
+require_once './PHPMailer/Exception.php';
+require_once './PHPMailer/PHPMailer.php';
+require_once './PHPMailer/SMTP.php';
+
+//sending email with pass
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -36,6 +44,21 @@ class Checker
     }
 
     function random_str(
+        $length,
+        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    ) {
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        if ($max < 1) {
+            throw new Exception('$keyspace must be at least two characters long');
+        }
+        for ($i = 0; $i < $length; ++$i) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
+    }
+
+    function random_num(
         $length,
         $keyspace = '0123456789'
     ) {
@@ -106,7 +129,7 @@ class Checker
             $responseData = $response->getBody();
 
             //creating it
-            $id = "check" . $this->random_str(4);
+            $id = "check" . $this->random_num(4);
 
             //getting url
             $url = "../v1/json/$id.json";
@@ -184,7 +207,7 @@ class Checker
             }
 
             //creating it
-            $id = "check" . $this->random_str(4);
+            $id = "check" . $this->random_num(4);
 
             //getting url
             $url = "../v1/json/$id.json";
@@ -318,8 +341,9 @@ class Checker
         }
     }
 
-    function history() {
-        
+    function history()
+    {
+
         $sql = "SELECT * FROM `checks`";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -341,10 +365,77 @@ class Checker
                 "method" => $method,
                 "url" => $url
             ];
-        };
+        }
+        ;
         $stmt->close();
         $this->conn->close();
 
         return $arr;
+    }
+
+    function changePass()
+    {
+        session_start();
+
+        //creating new pass
+        $pass = $this->random_str(15);
+
+        //creating hash for that pass
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
+
+        // Create a PHPMailer instance; passing `true` enables exceptions
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
+            ; // Disable verbose debug output
+            $mail->isSMTP(); // Send using SMTP
+            $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+            $mail->SMTPAuth = true; // Enable SMTP authentication
+            $mail->Username = 'meraki4446996@gmail.com'; // SMTP username
+            $mail->Password = ''; // SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Enable TLS encryption
+            $mail->Port = 465; // TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->Timeout = 1;
+
+            // Recipients
+            $mail->setFrom('meraki4446996@gmail.com', 'Email Checker');
+            $mail->addAddress("usmansaleem4446996@gmail.com", "User");
+
+            //not showing errors
+            $mail->SMTPDebug = false;
+
+            // Content
+            $mail->isHTML(true); // Set email format to HTML
+            $mail->Subject = 'Reset Password';
+            $mail->Body = "Your new password is this: $pass <br> Confirm through this link: 
+            <a target='_blank' href='{$_SERVER["SERVER_NAME"]}/php/verify.php?new_pass=$hash'>Confirm</a>";
+
+            // Send email
+            $mail->send();
+
+            //creating hash session for new pass
+            $_SESSION["new_pass"] = $hash;
+
+            return true;
+        } catch (Exception $e) {
+            echo $e;
+            $this->Error("Request failed. Please try later");
+        }
+    }
+
+    function savePass($hash)
+    {
+        try {
+            $sql = "UPDATE `password` SET `password` = ?;";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("s", $hash);
+            $stmt->execute();
+            $stmt->close();
+            return true;
+        } catch (Exception $err) {
+            $this->Error("Couldn't save. Please try again.");
+        }
     }
 }

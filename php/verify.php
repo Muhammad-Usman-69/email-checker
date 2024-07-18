@@ -27,9 +27,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result == true) {
         header("location: /");
         exit();
-    } 
-    
+    }
+
     $message = "Wrong Password";
+}
+
+//if new password
+if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
+    
+    //matching with new pass hash session
+    session_start();
+    
+    $new_pass = $_GET["new_pass"];
+    $session_hash = $_SESSION["new_pass"];
+
+    if ($new_pass != $session_hash) {
+        //if not then just redirecting to normal url
+        header("location: ./verify.php");
+        exit();
+    } 
+
+    //changing in db
+    require "Checker.php";
+    require "config.php";
+
+    $obj = new Checker();
+    $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
+    $result = $obj->savePass($session_hash);
+    if ($result == true) {
+        $_SESSION["allow"] = true; //setting session
+        header("location: /");
+        exit();
+    }
 }
 ?>
 
@@ -66,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit"
                 class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
         </form>
-        <?php 
+        <?php
         if ($message != null) {
             echo '<div class="text-red-600 font-semibold text-sm flex items-center justify-center space-x-1">
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" viewBox="0 0 48 48">
@@ -76,11 +105,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
                     </path>
                 </svg>
-                <span>'.$message.'</span>
+                <span>' . $message . '</span>
+            </div>
+            <div class="text-red-600 font-semibold text-sm flex items-center justify-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" viewBox="0 0 48 48">
+                    <path fill="rgb(220 38 38)" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
+                    </path>
+                    <path fill="#fff"
+                        d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
+                    </path>
+                </svg>
+                <p>Forgot password?</p>
+                <a class="font-bold hover:underline" href="./changepass.php">Change</a>
             </div>';
         }
         ?>
-        
+
     </div>
 
     <footer class="bg-white border-gray-800 border-t mt-auto">

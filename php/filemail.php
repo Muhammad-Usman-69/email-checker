@@ -84,6 +84,13 @@ foreach ($rows as $row) {
 
 fclose($csv);
 
+//making limit to email
+$limit = 100;
+if (count($emails) > $limit) {
+    echo json_encode(["error" => "Email limit exceeded. Can't be more than $limit."]);
+    exit();
+}
+
 $obj = new Checker();
 
 $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);

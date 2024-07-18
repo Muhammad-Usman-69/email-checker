@@ -29,6 +29,12 @@ document.getElementById("multiple-email-form").addEventListener("submit", (e) =>
     input.value = "";
     //splitting to arr
     let arr = data.split("\n");
+    //can't be more than
+    const limit = 100;
+    if (arr.length > limit) {
+        changeInfoContainer("Email limit exceeded. Can't be more than " + limit + ".", "red", "ff0000");
+        return;
+    }
     // Create a FormData object to hold the array
     let formData = new FormData();
     //clearing any unusual data and appending data

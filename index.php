@@ -142,7 +142,6 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
     <div id="dummy" class="border-red-700 bg-red-200 text-red-600 border-green-700 bg-green-200 text-green-600"></div>
 
     <script src="side/dev.js"></script>
-    <!-- <script src="side/flowbite.js"></script> -->
     <script>
         document.getElementById("multiple-email").placeholder =
             "example@example.com\nexample@example.com\nexample@example.com\nexample@example.com\nexample@example.com";

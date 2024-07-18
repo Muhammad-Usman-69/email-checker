@@ -66,6 +66,9 @@ async function submitData(endpoint, data) {
     document.getElementById("result").classList.add("hidden");
     document.getElementById("download-form").classList.add("hidden");
 
+    //changing info container
+    changeInfoContainer("Request has been sent.", "green", "009933");
+
     let res = await fetch(endpoint, {
         method: "POST",
         body: data
@@ -78,9 +81,13 @@ async function submitData(endpoint, data) {
 
 async function loadData(data) {
     if (data.error != undefined) {
-        console.log(data);
+        //changing info container
+        changeInfoContainer(data.error, "red", "ff0000");
         return;
     }
+
+    //changing info container
+    changeInfoContainer("Data has been recieved.", "blue", "2196f3");
 
     //showing result
     let result = document.getElementById("result");
@@ -177,7 +184,7 @@ async function history() {
 
         //if single method
         if (method == "Single") {
-            showSingleHistory(container, id, time, method, url);
+            showSingleHistory(container, id, time, url);
             return;
         }
 
@@ -194,7 +201,7 @@ async function showSingleHistoryEmail(id) {
 }
 
 //showing single history
-async function showSingleHistory(container, id, time, method, url) {
+async function showSingleHistory(container, id, time, url) {
 
     //fetching email and status from res
     const res = await fetch(url);
@@ -214,7 +221,7 @@ async function showSingleHistory(container, id, time, method, url) {
     }
 
     container.innerHTML +=
-    `<div
+        `<div
         class="space-y-2 border-[#1F2937] border border-b-0 last:border-b bg-white p-2 first:rounded-t-md last:rounded-b-md">
         <div class="flex items-center justify-between">
             <div class="text-base mx-2">
@@ -252,7 +259,7 @@ async function showSingleHistory(container, id, time, method, url) {
 
 function showMultipleHistory(container, id, time) {
     container.innerHTML +=
-    `<div
+        `<div
         class="flex items-center justify-between border-[#1F2937] border border-b-0 last:border-b bg-white p-2 first:rounded-t-md last:rounded-b-md">
         <div class="text-base mx-2">
             <p class="font-semibold space-x-2.5">
@@ -276,5 +283,21 @@ function showMultipleHistory(container, id, time) {
                     alt="">
             </button>
         </form>
+    </div>`;
+}
+
+//changing color of info container
+function changeInfoContainer(message, color, fill) {
+    document.getElementById("info-container").innerHTML =
+        `<div class="rounded-md bg-${color}-200 border-${color}-700 border flex items-center space-x-2 p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
+            <path fill="#${fill}"
+                d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
+            </path>
+            <path fill="#fff"
+                d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
+            </path>
+        </svg>
+        <p class="text-${color}-600 font-semibold">${message}</p>
     </div>`;
 }

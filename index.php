@@ -20,7 +20,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
         type="image/x-icon">
 </head>
 
-<body class="bg-[#e4eaf2] text-[#1F2937] flex flex-col min-h-screen">
+<body class="bg-[#e4eaf2] text-[#1F2937] flex flex-col min-h-screen relative">
 
     <header class="p-3 border-b border-gray-800 flex items-center bg-white">
         <a href="/" class="flex flex-row items-center space-x-3">
@@ -73,16 +73,18 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
                         class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
                 </div>
 
-                <div class="rounded-md bg-blue-200 border-blue-700 border flex items-center space-x-2 p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" viewBox="0 0 48 48">
-                        <path fill="#2196f3"
-                            d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
-                        </path>
-                        <path fill="#fff"
-                            d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
-                        </path>
-                    </svg>
-                    <p class="text-blue-500 font-semibold">One&nbsp;Email&nbsp;Per&nbsp;Line</p>
+                <div id="info-container">
+                    <div class="rounded-md bg-blue-200 border-blue-700 border flex items-center space-x-2 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
+                            <path fill="#2196f3"
+                                d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
+                            </path>
+                            <path fill="#fff"
+                                d="M22 22h4v11h-4V22zM26.5 16.5c0 1.379-1.121 2.5-2.5 2.5s-2.5-1.121-2.5-2.5S22.621 14 24 14 26.5 15.121 26.5 16.5z">
+                            </path>
+                        </svg>
+                        <p class="text-blue-600 font-semibold">One Email Per Line</p>
+                    </div>
                 </div>
             </form>
 
@@ -137,7 +139,10 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
         <p class="text-center py-4">Email Checker | &copy; 2024 All Rights Reserved</p>
     </footer>
 
+    <div id="dummy" class="border-red-700 bg-red-200 text-red-600 border-green-700 bg-green-200 text-green-600"></div>
+
     <script src="side/dev.js"></script>
+    <!-- <script src="side/flowbite.js"></script> -->
     <script>
         document.getElementById("multiple-email").placeholder =
             "example@example.com\nexample@example.com\nexample@example.com\nexample@example.com\nexample@example.com";

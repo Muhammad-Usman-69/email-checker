@@ -17,6 +17,13 @@ if ($_FILES["file"] == "") {
     exit();
 }
 
+//check if allowed
+session_start();
+if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
+    header("location:./php/verify.php");
+    exit();
+}
+
 header("Content-Type: application/json");
 
 require "config.php";

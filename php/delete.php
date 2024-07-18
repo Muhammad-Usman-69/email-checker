@@ -1,6 +1,6 @@
 <?php
 
-//deleting after 7 day of creation
+//deleting after 7 day of creation by cron jobs
 require "config.php";
 require "Checker.php";
 

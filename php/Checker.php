@@ -1,6 +1,6 @@
 <?php
 
-require_once ("../vendor/autoload.php");
+require_once "../vendor/autoload.php";
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -259,7 +259,7 @@ class Checker
 
         header("content-type: application/csv");
         header("Content-Disposition: attachment; filename=$id.csv");
-        
+
         $this->conn->close();
     }
 
@@ -282,7 +282,8 @@ class Checker
                 $stmt2 = $this->conn->prepare($sql);
                 $stmt2->execute();
                 $stmt2->close();
-            };
+            }
+            ;
         }
         $stmt->close(); //closing
 
@@ -296,5 +297,54 @@ class Checker
         $this->conn->close();
 
         echo "deleted";
+    }
+
+    function verifyPass($pass)
+    {
+        //for tasks
+        $sql = "SELECT * FROM `password`";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        // $phash = password_hash($pass, PASSWORD_DEFAULT);
+        if (password_verify($pass, $row["password"])) {
+            session_start();
+            $_SESSION["allow"] = true; //setting session
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function history() {
+        
+        $sql = "SELECT * FROM `checks`";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $num = $result->num_rows;
+        //if exists
+        if ($num == 0) {
+            $this->Error("Nothing found");
+        }
+        //getting data
+        while ($row = $result->fetch_assoc()) {
+            $id = $row["check_id"];
+            $time = $row["time"];
+            $method = $row["method"];
+            $url = $row["url"];
+            $arr[] = [
+                "id" => $id,
+                "time" => $time,
+                "method" => $method,
+                "url" => $url
+            ];
+        };
+        $stmt->close();
+        $this->conn->close();
+
+        return $arr;
     }
 }

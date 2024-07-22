@@ -26,7 +26,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 
 header("Content-Type: application/json");
 
-require "config.php";
+
 require "Checker.php";
 
 $email = $_POST["email"];
@@ -36,5 +36,6 @@ $obj = new Checker();
 $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
 $result = $obj->singleCheck($email, API);
 $obj->saveToDb($result["id"], "none", "Single", $result["url"]);
+$obj->increaseUse(1);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

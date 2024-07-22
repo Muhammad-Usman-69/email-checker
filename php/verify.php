@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"];
 
     require "Checker.php";
-    require "config.php";
+
 
     $obj = new Checker();
     $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
@@ -49,7 +49,7 @@ if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
 
     //changing in db
     require "Checker.php";
-    require "config.php";
+
 
     $obj = new Checker();
     $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);

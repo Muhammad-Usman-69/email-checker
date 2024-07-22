@@ -26,7 +26,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 
 header("Content-Type: application/json");
 
-require "config.php";
+
 require "Checker.php";
 
 $file = $_FILES["file"];
@@ -85,18 +85,22 @@ foreach ($rows as $row) {
 fclose($csv);
 
 //making limit to email
-$limit = 100;
+$limit = ONETIMELIMIT;
 if (count($emails) > $limit) {
     echo json_encode(["error" => "Email limit exceeded. Can't be more than $limit."]);
     exit();
 }
 
+$count = count($emails);
+
 $obj = new Checker();
 
+$obj->checkUse($count);
 $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
 $task_id = $obj->multipleCheck($emails, API);
 $obj->saveTask($task_id);
 $result = $obj->getMultipleResults($task_id, API);
 $obj->saveToDb($result["id"], $task_id, "File", $result["url"]);
+$obj->increaseUse($count);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

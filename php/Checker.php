@@ -1,5 +1,5 @@
 <?php
-
+require_once "config.php";
 require_once "../vendor/autoload.php";
 require_once './PHPMailer/Exception.php';
 require_once './PHPMailer/PHPMailer.php';
@@ -17,6 +17,60 @@ class Checker
 {
     protected $conn;
     protected $error = false;
+    protected $dailyUse;
+
+    function __construct()
+    {
+        $this->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
+        $this->checkLimit();
+    }
+
+    function checkLimit()
+    {
+        //check if maximum limit is reached
+        $sql = "SELECT * FROM `dailyusage`";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $use = $row["dailyuse"];
+        $stmt->close();
+
+        $this->dailyUse = $use;
+
+        if ($use >= DAILYLIMIT) {
+            $this->Error("Maximum daily limit (" . DAILYLIMIT . ") has been reached.");
+        }
+    }
+
+    function checkUse($count)
+    {
+        if (($count + $this->dailyUse) > DAILYLIMIT) {
+            $remaining = DAILYLIMIT - $this->dailyUse;
+            $this->Error("Number of email will surpass the allowed limit. Remaining email use is: $remaining");
+        }
+    }
+
+    function increaseUse($count)
+    {
+        $oldCount = $this->dailyUse;
+        $newCount = $this->dailyUse + $count;
+        // increasing use
+        $sql = "UPDATE `dailyusage` SET `dailyuse` = $newCount WHERE `dailyuse` = $oldCount;";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $stmt->close();
+        $this->conn->close();
+    }
+
+    function resetUse() {
+        // increasing use
+        $sql = "UPDATE `dailyusage` SET `dailyuse` = 0";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $stmt->close();
+        $this->conn->close();
+    }
 
     protected function Error($err)
     {

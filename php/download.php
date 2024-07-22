@@ -27,7 +27,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 }
 
 
-require "config.php";
+
 require "Checker.php";
 
 $id = $_POST["id"];

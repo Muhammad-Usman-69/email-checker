@@ -1,6 +1,6 @@
 <?php
 
-require "config.php";
+
 require "Checker.php";
 
 $obj = new Checker();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2024 at 08:46 AM
+-- Generation Time: Jul 22, 2024 at 01:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -35,16 +35,22 @@ CREATE TABLE `checks` (
   `time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `checks`
+-- Table structure for table `dailyusage`
 --
 
-INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `time`) VALUES
-('check0848', 'none', 'Single', '../v1/json/check0848.json', '2024-07-18 11:09:00'),
-('check1580', 'none', 'Single', '../v1/json/check1580.json', '2024-07-18 11:22:00'),
-('check1701', 'none', 'Single', '../v1/json/check1701.json', '2024-07-18 11:10:00'),
-('check3911', 'none', 'Single', '../v1/json/check3911.json', '2024-07-18 11:41:00'),
-('check9690', '710358', 'File', '../v1/json/check9690.json', '2024-07-18 11:09:00');
+CREATE TABLE `dailyusage` (
+  `dailyuse` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dailyusage`
+--
+
+INSERT INTO `dailyusage` (`dailyuse`) VALUES
+(0);
 
 -- --------------------------------------------------------
 
@@ -61,7 +67,7 @@ CREATE TABLE `password` (
 --
 
 INSERT INTO `password` (`password`) VALUES
-('$2y$10$JMU7ju7QA/h1/K.xcmta3OAntcKSMq5RMJcxAo25zSaRipA8fUbrS');
+('$2y$10$TqBYLNCYRC8TtONWNmQepO76ThRKg3eCik4hZHhjs80mPlE3RFMLe');
 
 -- --------------------------------------------------------
 
@@ -75,13 +81,6 @@ CREATE TABLE `tasks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tasks`
---
-
-INSERT INTO `tasks` (`task_id`, `task_time`) VALUES
-('710358', '2024-07-18 11:09:00');
-
---
 -- Indexes for dumped tables
 --
 
@@ -90,6 +89,12 @@ INSERT INTO `tasks` (`task_id`, `task_time`) VALUES
 --
 ALTER TABLE `checks`
   ADD PRIMARY KEY (`check_id`);
+
+--
+-- Indexes for table `dailyusage`
+--
+ALTER TABLE `dailyusage`
+  ADD PRIMARY KEY (`dailyuse`);
 
 --
 -- Indexes for table `password`

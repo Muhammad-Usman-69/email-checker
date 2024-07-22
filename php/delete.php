@@ -5,8 +5,6 @@ require "Checker.php";
 
 $obj = new Checker();
 
-$obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
-
 //days
 $days = 7;
 

@@ -20,10 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     require "Checker.php";
 
-
     $obj = new Checker();
-    $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
-    $result = $obj->verifyPass($password);
+        $result = $obj->verifyPass($password);
     if ($result == true) {
         header("location: /");
         exit();
@@ -50,10 +48,8 @@ if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
     //changing in db
     require "Checker.php";
 
-
     $obj = new Checker();
-    $obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
-    $result = $obj->savePass($session_hash);
+        $result = $obj->savePass($session_hash);
     if ($result == true) {
         $_SESSION["allow"] = true; //setting session
         header("location: /");

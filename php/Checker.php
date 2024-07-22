@@ -63,7 +63,8 @@ class Checker
         $this->conn->close();
     }
 
-    function resetUse() {
+    function resetUse()
+    {
         // increasing use
         $sql = "UPDATE `dailyusage` SET `dailyuse` = 0";
         $stmt = $this->conn->prepare($sql);
@@ -284,8 +285,6 @@ class Checker
 
     function download($id, $status)
     {
-        header("content-type: json");
-
         //check if exist
         try {
             $sql = "SELECT * FROM `checks` WHERE `check_id` = ?";
@@ -330,12 +329,12 @@ class Checker
             }
         }
 
+        header("content-type: application/csv");
+        header("Content-Disposition: attachment; filename=$id.csv");
+
         //ecohing result
         echo $headers;
         echo $rows;
-
-        header("content-type: application/csv");
-        header("Content-Disposition: attachment; filename=$id.csv");
 
         $this->conn->close();
     }
@@ -445,17 +444,17 @@ class Checker
             $mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
             ; // Disable verbose debug output
             $mail->isSMTP(); // Send using SMTP
-            $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+            $mail->Host = SMTPHOST; // Set the SMTP server to send through
             $mail->SMTPAuth = true; // Enable SMTP authentication
-            $mail->Username = 'meraki4446996@gmail.com'; // SMTP username
-            $mail->Password = 'eqvv wxjk mkht rcxw'; // SMTP password
+            $mail->Username = SMTPUSERNAME; // SMTP username
+            $mail->Password = SMTPPASSWORD; // SMTP password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Enable TLS encryption
             $mail->Port = 465; // TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
             $mail->Timeout = 1;
 
             // Recipients
-            $mail->setFrom('meraki4446996@gmail.com', 'Email Checker');
-            $mail->addAddress("usmansaleem4446996@gmail.com", "User");
+            $mail->setFrom(SMTPUSERNAME, 'Email Checker');
+            $mail->addAddress(DEFAULTEMAIL, "User");
 
             //not showing errors
             $mail->SMTPDebug = false;
@@ -474,7 +473,6 @@ class Checker
 
             return true;
         } catch (Exception $e) {
-            echo $e;
             $this->Error("Request failed. Please try later");
         }
     }

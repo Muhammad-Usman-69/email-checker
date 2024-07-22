@@ -62,7 +62,7 @@ $found = false;
 //looping though headers to get email header index
 foreach ($headers as $header) {
     //checking if contain email
-    if (str_contains($header, "email")) {
+    if ($header == "Email" || $header == "email" || $header == "EMAIL" ) {
         $found = true;
         $index = $i;
     }
@@ -96,7 +96,6 @@ $count = count($emails);
 $obj = new Checker();
 
 $obj->checkUse($count);
-$obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
 $task_id = $obj->multipleCheck($emails, API);
 $obj->saveTask($task_id);
 $result = $obj->getMultipleResults($task_id, API);

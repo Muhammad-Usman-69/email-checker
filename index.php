@@ -49,7 +49,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 
         <!-- file checker -->
         <div class="w-full space-y-4">
-            <h3 class="text-xl font-semibold">File Checker (Max. limit 100)</h3>
+            <h3 class="text-xl font-semibold">File Checker (Max. limit 200)</h3>
             <form action="" class="flex flex-col" id="multiple-email-file">
                 <div class="flex">
                     <input name="file" id="email-file" type="file"
@@ -63,7 +63,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
 
         <!-- multiple checker -->
         <div class="col-span-3 space-y-4">
-            <h3 class="text-xl font-semibold">Multiple Email Checker (Max. limit 100)</h3>
+            <h3 class="text-xl font-semibold">Multiple Email Checker (Max. limit 200)</h3>
             <form action="" id="multiple-email-form">
                 <div class="flex w-full">
                     <textarea name="email" id="multiple-email"

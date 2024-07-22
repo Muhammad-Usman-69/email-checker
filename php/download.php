@@ -26,16 +26,12 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
     exit();
 }
 
-
-
 require "Checker.php";
 
 $id = $_POST["id"];
 $select = $_POST["select"];
 
 $obj = new Checker();
-
-$obj->dbConnect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
 
 $obj->download($id, $select);
 

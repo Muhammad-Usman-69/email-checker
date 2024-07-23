@@ -148,7 +148,7 @@ class Checker
             $stmt->execute();
             $stmt->close();
         } catch (Exception $err) {
-            $this->Error("Couldn't save file. Please try later.");
+            $this->Error("Couldn't save the check. Please try later.");
         }
     }
 
@@ -165,7 +165,7 @@ class Checker
             $stmt->execute();
             $stmt->close();
         } catch (Exception $err) {
-            $this->Error("Couldn't save file. Please try later.");
+            $this->Error("Couldn't save the task. Please try later.");
         }
     }
 
@@ -257,10 +257,11 @@ class Checker
             }
 
             //creating it
-            $id = $this->random_num(4);
+            $num = $this->random_num(4);
+            $id = "check$num";
 
             //getting url
-            $url = "../v1/json/check$id.json";
+            $url = "../v1/json/$id.json";
 
             //writing data
             $fp = fopen($url, "w");
@@ -270,6 +271,7 @@ class Checker
             return [
                 "status" => "success",
                 "id" => $id,
+                "num" => $num,
                 "url" => $url,
                 "check" => "multiple"
             ];
@@ -372,11 +374,11 @@ class Checker
 
                 //pushing to rows if all
                 if ($status == "all") {
-                    $rows .= "$email,$emailStatus\n";
+                    $rows .= "$email," . ucwords($emailStatus) . "\n";
                 }
                 //pushing safe
                 if (($emailStatus == "safe" || $emailStatus == "valid") && $status != "all") {
-                    $rows .= "$email,$emailStatus\n";
+                    $rows .= "$email," . ucwords($emailStatus) . "\n";
                 }
             }
         }

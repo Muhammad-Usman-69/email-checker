@@ -101,13 +101,11 @@ $obj->saveTask($task_id);
 $result = $obj->getMultipleResults($task_id, API);
 
 // saving csv in temp folder
-$temp = "../v1/temp/temp" . $result["id"] . ".csv";
+$temp = "../v1/temp/temp" . $result["num"] . ".csv";
 $csv = file_get_contents($fileTmpName);
 $fp = fopen($temp, "w");
 fwrite($fp, $csv);
 fclose($fp);
-
-$id = "check" . $result["id"];
 
 $obj->saveToDb($id, $task_id, "File", $result["url"], $temp);
 $obj->increaseUse($count);

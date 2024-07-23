@@ -196,30 +196,12 @@ async function history() {
 document.addEventListener("load", history());
 
 //showing single history email
-async function showSingleHistoryEmail(id) {
+function showSingleHistoryEmail(id) {
     document.getElementById(id).classList.toggle("hidden");
 }
 
 //showing single history
-async function showSingleHistory(container, id, time, url) {
-
-    //fetching email and status from res
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const email = data["email"];
-    const status = data["status"];
-
-    //initializing color var
-    let color;
-
-    //changing color according to status
-    if (status == "valid" || status == "safe") {
-        color = "bg-green-300 border-green-700 text-green-700";
-    } else {
-        color = "bg-red-300 border-red-700 text-red-700";
-    }
-
+function showSingleHistory(container, id, time, url) {
     container.innerHTML +=
         `<div
         class="space-y-2 border-[#1F2937] border border-b-0 last:border-b bg-white p-2 first:rounded-t-md last:rounded-b-md">
@@ -245,16 +227,43 @@ async function showSingleHistory(container, id, time, url) {
 
         <div class="space-y-2 hidden" id="${id}">
             <hr class="text-gray-700 h-0.5 bg-gray-700">
-
             <div class="flex flex-col space-y-1">
-                <div
-                    class="flex items-center justify-between rounded-md p-2 ${color} border font-semibold">
-                    <p>${email}</p>
-                    <p class="capitalize">${status}</p>
+                <div class="flex items-center justify-between rounded-md p-2 bg-red-300 border-red-700 text-red-700 border font-semibold">
+                    <p>Data Not Found</p>
                 </div>
             </div>
         </div>
     </div>`;
+
+    showMultipleHistoryData(id, url);
+}
+
+async function showMultipleHistoryData(id, url) {
+    //fetching email and status from res
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const email = data["email"];
+    const status = data["status"];
+
+    //initializing color var
+    let color;
+
+    //changing color according to status
+    if (status == "valid" || status == "safe") {
+        color = "bg-green-300 border-green-700 text-green-700";
+    } else {
+        color = "bg-red-300 border-red-700 text-red-700";
+    }
+
+    document.getElementById(id).innerHTML =
+        `<hr class="text-gray-700 h-0.5 bg-gray-700">
+        <div class="flex flex-col space-y-1">
+            <div class="flex items-center justify-between rounded-md p-2 ${color} border font-semibold">
+                <p>${email}</p>
+                <p class="capitalize">${status}</p>
+            </div>
+        </div>`;
 }
 
 function showMultipleHistory(container, id, time) {

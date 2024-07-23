@@ -34,7 +34,7 @@ $email = $_POST["email"];
 $obj = new Checker();
 
 $result = $obj->singleCheck($email, API);
-$obj->saveToDb($result["id"], "none", "Single", $result["url"]);
+$obj->saveToDb($result["id"], "none", "Single", $result["url"], "none");
 $obj->increaseUse(1);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

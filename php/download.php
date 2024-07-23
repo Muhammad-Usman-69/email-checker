@@ -1,6 +1,6 @@
 <?php
 
-header("Content-Type: json");
+// header("Content-Type: json");
 
 //check if post
 if ($_SERVER["REQUEST_METHOD"] != "POST") {

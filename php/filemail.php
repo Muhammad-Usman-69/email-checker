@@ -62,7 +62,7 @@ $found = false;
 //looping though headers to get email header index
 foreach ($headers as $header) {
     //checking if contain email
-    if ($header == "Email" || $header == "email" || $header == "EMAIL" ) {
+    if ($header == "Email" || $header == "email" || $header == "EMAIL") {
         $found = true;
         $index = $i;
     }
@@ -71,7 +71,7 @@ foreach ($headers as $header) {
 
 // if not found
 if ($found == false) {
-    echo json_encode(["error" => "Email not found in given file"]);
+    echo json_encode(["error" => "Email column not found in given file. Allowed column names are \"Email\", \"email\" and \"EMAIL\"."]);
     exit();
 }
 
@@ -99,7 +99,17 @@ $obj->checkUse($count);
 $task_id = $obj->multipleCheck($emails, API);
 $obj->saveTask($task_id);
 $result = $obj->getMultipleResults($task_id, API);
-$obj->saveToDb($result["id"], $task_id, "File", $result["url"]);
+
+// saving csv in temp folder
+$temp = "../v1/temp/temp" . $result["id"] . ".csv";
+$csv = file_get_contents($fileTmpName);
+$fp = fopen($temp, "w");
+fwrite($fp, $csv);
+fclose($fp);
+
+$id = "check" . $result["id"];
+
+$obj->saveToDb($id, $task_id, "File", $result["url"], $temp);
 $obj->increaseUse($count);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

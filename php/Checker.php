@@ -137,7 +137,7 @@ class Checker
         }
     }
 
-    function saveToDb($id, $task_id, $method, $url)
+    function saveToDb($id, $task_id, $method, $url, $temp)
     {
         //stopper
         // return;
@@ -147,9 +147,9 @@ class Checker
         $time = date("Y:m:d g:i a");
 
         try {
-            $sql = "INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `time`) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `temp`, `time`) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("sssss", $id, $task_id, $method, $url, $time);
+            $stmt->bind_param("ssssss", $id, $task_id, $method, $url, $temp, $time);
             $stmt->execute();
             $stmt->close();
         } catch (Exception $err) {
@@ -262,10 +262,10 @@ class Checker
             }
 
             //creating it
-            $id = "check" . $this->random_num(4);
+            $id = $this->random_num(4);
 
             //getting url
-            $url = "../v1/json/$id.json";
+            $url = "../v1/json/check$id.json";
 
             //writing data
             $fp = fopen($url, "w");
@@ -303,29 +303,86 @@ class Checker
             $this->Error("Couldn't save file. Please try later.");
         }
 
-        $json = file_get_contents($resultAssoc["url"]);
-        $data = json_decode($json);
+        // if csv
+        if ($resultAssoc["method"] == "File" && ($resultAssoc["temp"] != "none")) {
 
-        $headers = "Email,Status\n"; // "," seperate the column
+            $rows = "";
 
-        $stdResult = $data->{"results"};
+            //opening file for read
+            $csv = fopen($resultAssoc["temp"], "r");
 
-        //getting object keys
-        $results = get_object_vars($stdResult);
-
-        $rows = "";
-
-        //looping through results
-        foreach ($results as $result) {
-            $email = $result->{"email"};
-            $emailStatus = $result->{"status"};
-            //pushing to rows if all
-            if ($status == "all") {
-                $rows .= "$email,$emailStatus\n";
+            //handling file and pushing data
+            while (($data = fgetcsv($csv, 2000)) !== FALSE) {
+                $csvRows[] = $data;
             }
-            //pushing safe
-            if (($emailStatus == "safe" || $emailStatus == "valid") && $status != "all") {
-                $rows .= "$email,$emailStatus\n";
+
+            // getting each row data as a single string
+            foreach ($csvRows as $csvRow) {
+                $str_row = "";
+                foreach ($csvRow as $csvColumn) {
+                    $str_row .= "$csvColumn,";
+                }
+                $str_rows[] = $str_row;
+            }
+
+            $headers = $str_rows[0] . "Status\n";
+
+            $str_rows = array_reverse($str_rows); // reversing array
+
+            // now getting json file
+            $json = json_decode(file_get_contents($resultAssoc["url"]));
+            $stdResult = $json->{"results"};
+            $results = get_object_vars($stdResult); //getting object keys
+
+            //looping through str row and matching each with result
+            foreach ($results as $result) {
+                $email = $result->{"email"};
+                $emailStatus = $result->{"status"};
+                $emailFound = false;
+
+                foreach ($str_rows as $str_row) {
+
+                    //check if found
+                    if (str_contains($str_row, $email) && $emailFound == false) {
+
+                        //pushing safe
+                        if (($emailStatus == "safe" || $emailStatus == "valid") && $status != "all") {
+                            $rows .= $str_row . ucwords($emailStatus) . "\n";
+                        }
+                        //pushing to rows if all
+                        if ($status == "all") {
+                            $rows .= $str_row . ucwords($emailStatus) . "\n";
+                        }
+                    }
+                }
+            }
+        } else {
+            // if multiple
+            $json = file_get_contents($resultAssoc["url"]);
+            $data = json_decode($json);
+
+            $headers = "Email,Status\n"; // "," seperate the column
+
+            $stdResult = $data->{"results"};
+
+            //getting object keys
+            $results = get_object_vars($stdResult);
+
+            $rows = "";
+
+            //looping through results
+            foreach ($results as $result) {
+                $email = $result->{"email"};
+                $emailStatus = $result->{"status"};
+
+                //pushing to rows if all
+                if ($status == "all") {
+                    $rows .= "$email,$emailStatus\n";
+                }
+                //pushing safe
+                if (($emailStatus == "safe" || $emailStatus == "valid") && $status != "all") {
+                    $rows .= "$email,$emailStatus\n";
+                }
             }
         }
 
@@ -397,7 +454,7 @@ class Checker
     function history()
     {
 
-        $sql = "SELECT * FROM `checks`";
+        $sql = "SELECT * FROM `checks` ORDER BY `checks`.`time` ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();

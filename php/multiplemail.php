@@ -45,7 +45,10 @@ $obj->checkUse($count);
 $task_id = $obj->multipleCheck($emails, API);
 $obj->saveTask($task_id);
 $result = $obj->getMultipleResults($task_id, API);
-$obj->saveToDb($result["id"], $task_id, "Multiple", $result["url"]);
+
+$id = "check" . $result["id"];
+
+$obj->saveToDb($id, $task_id, "Multiple", $result["url"], "none");
 $obj->increaseUse($count);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

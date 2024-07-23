@@ -85,10 +85,10 @@ if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
                 </a>
             </div>
 
-            <form action="verify.php" method="post" class="flex justify-center items-center" id="check">
+            <form action="verify.php" method="post" class="flex justify-center items-center" id="check">   
                 <input name="password" type="password" autocomplete="new-password" placeholder="••••••••"
-                    class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3" minlength="10"
-                    required>
+                        class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3" minlength="10"
+                        required>
                 <button type="submit"
                     class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
             </form>

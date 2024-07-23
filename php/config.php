@@ -11,3 +11,4 @@ define("DEFAULTEMAIL", "usmansaleem4446996@gmail.com");
 define("SMTPHOST", "smtp.gmail.com");
 define("SMTPUSERNAME", "meraki4446996@gmail.com");
 define("SMTPPASSWORD", "eqvv wxjk mkht rcxw");
+define("CRYPTKEY", "3B0lYKh0D6TjrGfIPizYnbQxLNBJW1");

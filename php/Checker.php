@@ -1,14 +1,7 @@
 <?php
+
 require_once "config.php";
 require_once "../vendor/autoload.php";
-require_once './PHPMailer/Exception.php';
-require_once './PHPMailer/PHPMailer.php';
-require_once './PHPMailer/SMTP.php';
-
-//sending email with pass
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -25,10 +18,15 @@ class Checker
         $this->checkLimit();
     }
 
+    function __destruct()
+    {
+        $this->conn->close();
+    }
+
     function checkLimit()
     {
         //check if maximum limit is reached
-        $sql = "SELECT * FROM `dailyusage`";
+        $sql = "SELECT * FROM `tuple` WHERE `id` = 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -56,11 +54,10 @@ class Checker
         $oldCount = $this->dailyUse;
         $newCount = $this->dailyUse + $count;
         // increasing use
-        $sql = "UPDATE `dailyusage` SET `dailyuse` = $newCount WHERE `dailyuse` = $oldCount;";
+        $sql = "UPDATE `tuple` SET `dailyuse` = $newCount WHERE `id` = 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $stmt->close();
-        $this->conn->close();
     }
 
     function resetUse()
@@ -70,7 +67,6 @@ class Checker
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $stmt->close();
-        $this->conn->close();
     }
 
     protected function Error($err)
@@ -91,7 +87,6 @@ class Checker
                 $names[] = $row;
             }
             $stmt->close();
-            $this->conn->close();
             return $names;
         } catch (Exception $err) {
             $this->Error("Database connection failed.");
@@ -144,7 +139,7 @@ class Checker
 
         // Taking current time
         date_default_timezone_set("Asia/Karachi");
-        $time = date("Y:m:d g:i a");
+        $time = date("Y:m:d G:i:s");
 
         try {
             $sql = "INSERT INTO `checks` (`check_id`, `task_id`, `method`, `url`, `temp`, `time`) VALUES (?, ?, ?, ?, ?, ?)";
@@ -392,8 +387,6 @@ class Checker
         //ecohing result
         echo $headers;
         echo $rows;
-
-        $this->conn->close();
     }
 
     function delete($until)
@@ -427,33 +420,11 @@ class Checker
         $stmt->execute();
         $stmt->close();
 
-        $this->conn->close();
-
         echo "deleted";
-    }
-
-    function verifyPass($pass)
-    {
-        //for tasks
-        $sql = "SELECT * FROM `password`";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $stmt->close();
-        // $phash = password_hash($pass, PASSWORD_DEFAULT);
-        if (password_verify($pass, $row["password"])) {
-            session_start();
-            $_SESSION["allow"] = true; //setting session
-            return true;
-        } else {
-            return false;
-        }
     }
 
     function history()
     {
-
         $sql = "SELECT * FROM `checks` ORDER BY `checks`.`time` ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -478,73 +449,7 @@ class Checker
         }
         ;
         $stmt->close();
-        $this->conn->close();
 
         return $arr;
-    }
-
-    function changePass()
-    {
-        session_start();
-
-        //creating new pass
-        $pass = $this->random_str(15);
-
-        //creating hash for that pass
-        $hash = password_hash($pass, PASSWORD_DEFAULT);
-
-        // Create a PHPMailer instance; passing `true` enables exceptions
-        $mail = new PHPMailer(true);
-
-        try {
-            // Server settings
-            $mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
-            ; // Disable verbose debug output
-            $mail->isSMTP(); // Send using SMTP
-            $mail->Host = SMTPHOST; // Set the SMTP server to send through
-            $mail->SMTPAuth = true; // Enable SMTP authentication
-            $mail->Username = SMTPUSERNAME; // SMTP username
-            $mail->Password = SMTPPASSWORD; // SMTP password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Enable TLS encryption
-            $mail->Port = 465; // TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-            $mail->Timeout = 1;
-
-            // Recipients
-            $mail->setFrom(SMTPUSERNAME, 'Email Checker');
-            $mail->addAddress(DEFAULTEMAIL, "User");
-
-            //not showing errors
-            $mail->SMTPDebug = false;
-
-            // Content
-            $mail->isHTML(true); // Set email format to HTML
-            $mail->Subject = 'Reset Password';
-            $mail->Body = "Your new password is this: $pass <br> Confirm through this link: 
-            <a target='_blank' href='{$_SERVER["SERVER_NAME"]}/php/verify.php?new_pass=$hash'>Confirm</a>";
-
-            // Send email
-            $mail->send();
-
-            //creating hash session for new pass
-            $_SESSION["new_pass"] = $hash;
-
-            return true;
-        } catch (Exception $e) {
-            $this->Error("Request failed. Please try later");
-        }
-    }
-
-    function savePass($hash)
-    {
-        try {
-            $sql = "UPDATE `password` SET `password` = ?;";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("s", $hash);
-            $stmt->execute();
-            $stmt->close();
-            return true;
-        } catch (Exception $err) {
-            $this->Error("Couldn't save. Please try again.");
-        }
     }
 }

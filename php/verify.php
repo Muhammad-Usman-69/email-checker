@@ -18,10 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $password = $_POST["password"];
 
-    require "Checker.php";
+    require "Verification.php";
 
-    $obj = new Checker();
-        $result = $obj->verifyPass($password);
+    $obj = new Verification();
+    $result = $obj->verifyPass($password);
     if ($result == true) {
         header("location: /");
         exit();
@@ -31,31 +31,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 //if new password
-if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
+if (isset($_GET["key"]) && $_GET["key"] != "") {
+    $key = $_GET["key"];
 
-    //matching with new pass hash session
-    session_start();
-
-    $new_pass = $_GET["new_pass"];
-    $session_hash = $_SESSION["new_pass"];
-
-    if ($new_pass != $session_hash) {
-        //if not then just redirecting to normal url
-        header("location: ./verify.php");
+    require "Verification.php";
+    $obj = new Verification();
+    $result = $obj->verifyKey($key);
+    
+    if ($result) {
+        echo "Password has been changed <a href='./verify.php'>verify</a>.";
         exit();
-    }
-
-    //changing in db
-    require "Checker.php";
-
-    $obj = new Checker();
-        $result = $obj->savePass($session_hash);
-    if ($result == true) {
-        $_SESSION["allow"] = true; //setting session
-        header("location: /");
-        exit();
-    }
+    };
 }
+
+//if changing password
+if (isset($_GET["changepass"]) && $_GET["changepass"] == true) {
+    require "Verification.php";
+    $obj = new Verification();
+
+    if ($obj->changePass()) {
+        echo "Email has been sent.";
+        exit();
+    };
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -85,10 +85,10 @@ if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
                 </a>
             </div>
 
-            <form action="verify.php" method="post" class="flex justify-center items-center" id="check">   
+            <form action="verify.php" method="post" class="flex justify-center items-center" id="check">
                 <input name="password" type="password" autocomplete="new-password" placeholder="••••••••"
-                        class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3" minlength="10"
-                        required>
+                    class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3" minlength="15"
+                    required>
                 <button type="submit"
                     class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
             </form>
@@ -114,7 +114,7 @@ if (isset($_GET["new_pass"]) && $_GET["new_pass"] != "") {
                     </path>
                 </svg>
                 <p>Forgot password?</p>
-                <a class="font-bold hover:underline" href="./changepass.php">Change</a>
+                <a class="font-bold hover:underline" target="_blank" href="./verify.php?changepass=true">Change</a>
             </div>';
         }
         ?>

@@ -63,10 +63,11 @@ class Checker
     function resetUse()
     {
         // increasing use
-        $sql = "UPDATE `dailyusage` SET `dailyuse` = 0";
+        $sql = "UPDATE `tuple` SET `dailyuse` = 0 WHERE `id` = 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $stmt->close();
+        echo "reset successful";
     }
 
     protected function Error($err)

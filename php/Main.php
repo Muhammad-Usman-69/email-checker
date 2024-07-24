@@ -1,8 +1,16 @@
 <?php
 
 require_once "config.php";
+require_once './PHPMailer/Exception.php';
+require_once './PHPMailer/PHPMailer.php';
+require_once './PHPMailer/SMTP.php';
 
-class Main {
+//sending email with pass
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
+class Main
+{
     protected $conn;
     protected $dailyUse;
 
@@ -22,15 +30,20 @@ class Main {
         try {
             $this->conn = new mysqli($server, $user, $pass, $db);
         } catch (Exception $err) {
-            $this->Error("Internal connection failed.");
+            $this->Error("Internal connection failed.", "Database connection failed.<br>$err");
         }
     }
 
-    protected function Error($err)
+    protected function Error($display_error, $techincal_error)
     {
-        header("content-type: application/json");
-        echo json_encode(["error" => $err]);
-        exit();
+        $this->sendError($techincal_error); //sending error to email
+        
+        if ($display_error != null) {
+            header("content-type: application/json");
+            echo json_encode(["error" => $display_error]); //showing display error
+            exit(); //exiting script
+        }
+
     }
 
     function random_str(
@@ -96,7 +109,7 @@ class Main {
 
         echo "deleted";
     }
-    
+
     function checkLimit()
     {
         //check if maximum limit is reached
@@ -111,7 +124,8 @@ class Main {
         $this->dailyUse = $use;
 
         if ($use >= DAILYLIMIT) {
-            $this->Error("Maximum daily limit (" . DAILYLIMIT . ") has been reached.");
+            $display_error = "Maximum daily limit (" . DAILYLIMIT . ") has been reached.";
+            $this->Error($display_error, $display_error);
         }
     }
 
@@ -119,7 +133,9 @@ class Main {
     {
         if (($count + $this->dailyUse) > DAILYLIMIT) {
             $remaining = DAILYLIMIT - $this->dailyUse;
-            $this->Error("Number of email will surpass the allowed limit. Remaining email use is: $remaining");
+
+            $display_error = "Number of email will surpass the allowed limit. Remaining email use is: $remaining";
+            $this->Error($display_error, $display_error);
         }
     }
 
@@ -142,5 +158,46 @@ class Main {
         $stmt->execute();
         $stmt->close();
         echo "reset successful";
+    }
+
+    function sendError($techincal_error)
+    {
+        if ($techincal_error == null) {
+            return;
+        }
+
+        // Create a PHPMailer instance; passing `true` enables exceptions
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
+            ; // Disable verbose debug output
+            $mail->isSMTP(); // Send using SMTP
+            $mail->Host = SMTPHOST; // Set the SMTP server to send through
+            $mail->SMTPAuth = true; // Enable SMTP authentication
+            $mail->Username = SMTPUSERNAME; // SMTP username
+            $mail->Password = SMTPPASSWORD; // SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Enable TLS encryption
+            $mail->Port = 465; // TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->Timeout = 1;
+
+            // Recipients
+            $mail->setFrom(SMTPUSERNAME, 'Email Checker');
+            $mail->addAddress(DEFAULTEMAIL, "User");
+
+            //not showing errors
+            $mail->SMTPDebug = false;
+
+            // Content
+            $mail->isHTML(true); // Set email format to HTML
+            $mail->Subject = 'Error';
+            $mail->Body = "$techincal_error";
+
+            // Send email
+            $mail->send();
+        } catch (Exception $err) {
+            return;
+        }
     }
 }

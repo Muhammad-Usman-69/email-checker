@@ -1,14 +1,8 @@
 <?php
 
 require "Main.php";
-require_once './PHPMailer/Exception.php';
-require_once './PHPMailer/PHPMailer.php';
-require_once './PHPMailer/SMTP.php';
-
-//sending email with pass
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
 
 class Verification extends Main
 {
@@ -26,6 +20,7 @@ class Verification extends Main
             $_SESSION["allow"] = true; //setting session
             return true;
         } else {
+            $this->Error(null, "Wrong password");
             return false;
         }
     }
@@ -78,8 +73,9 @@ class Verification extends Main
             $stmt->close();
 
             return true;
-        } catch (Exception $e) {
-            $this->Error("Request failed. Please try later");
+        } catch (Exception $err) {
+            $display_error = "Request to change password failed. Please try later.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
     }
 
@@ -95,7 +91,8 @@ class Verification extends Main
             $stmt->close();
             $this->clearKey(); //clearing temp
         } catch (Exception $err) {
-            $this->Error("Couldn't save. Please try again.");
+            $display_error = "Couldn't save the password. Please try again.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
     }
 
@@ -110,7 +107,8 @@ class Verification extends Main
 
         if ($key != $row["temp_key"]) {
             $this->clearKey(); //clearing temp
-            $this->Error("Access denied.");
+            $display_error = "Access denied.";
+            $this->Error($display_error, "$display_error<br>Someone is trying to change password");
         }
 
         $this->savePass($key);
@@ -118,21 +116,24 @@ class Verification extends Main
         return true;
     }
 
-    function clearKey() {
+    function clearKey()
+    {
         $sql = "UPDATE `tuple` SET `temp_key` = '' WHERE `id` = 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $stmt->close();
     }
 
-    function encryptIt($s) {
+    function encryptIt($s)
+    {
         $cryptKey = CRYPTKEY;
         $iv = substr(md5($cryptKey), 0, 16);
         $encrypted = openssl_encrypt($s, 'aes-256-cbc', md5($cryptKey), 0, $iv);
         return base64_encode($encrypted);
     }
-    
-    function decryptIt($s) {
+
+    function decryptIt($s)
+    {
         $cryptKey = CRYPTKEY;
         $iv = substr(md5($cryptKey), 0, 16);
         $decrypted = openssl_decrypt(base64_decode($s), 'aes-256-cbc', md5($cryptKey), 0, $iv);

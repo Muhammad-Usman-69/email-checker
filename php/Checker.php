@@ -23,7 +23,8 @@ class Checker extends Main
             $stmt->execute();
             $stmt->close();
         } catch (Exception $err) {
-            $this->Error("Couldn't save the check. Please try later.");
+            $display_error = "Couldn't save the check. Please try later.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
     }
 
@@ -40,7 +41,8 @@ class Checker extends Main
             $stmt->execute();
             $stmt->close();
         } catch (Exception $err) {
-            $this->Error("Couldn't save the task. Please try later.");
+            $display_error = "Couldn't save the task. Please try later.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
     }
 
@@ -64,6 +66,16 @@ class Checker extends Main
             fwrite($fp, $responseData);
             fclose($fp);
 
+            //opening for reading error
+            $file = fopen($url, "r");
+            $json = json_decode($file);
+            if ($json->{"status"} != "success") {
+                fclose($file);
+                $display_error = "Request failed to proceed, please try later.";
+                $this->Error($display_error, $display_error);
+            }
+            fclose($file);
+
             return [
                 "status" => "success",
                 "id" => $id,
@@ -71,7 +83,8 @@ class Checker extends Main
                 "check" => "single"
             ];
         } catch (Exception $err) {
-            $this->Error("External server (reoon) is not responding. Please try later.");
+            $display_error = "External server (reoon) is not responding. Please try later.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
     }
 
@@ -88,7 +101,8 @@ class Checker extends Main
                 ]
             ]);
         } catch (Exception $err) {
-            $this->Error("External server (reoon) is not responding. Please try later.");
+            $display_error = "External server (reoon) is not responding. Please try later.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
 
         //check if success
@@ -96,7 +110,8 @@ class Checker extends Main
         $data = json_decode($responseData);
 
         if ($data->{"status"} != "success") {
-            $this->Error("Request failed, please try later");
+            $display_error = "Request failed to proceed, please try later.";
+            $this->Error($display_error, $display_error);
         }
 
         //getting task id
@@ -131,7 +146,8 @@ class Checker extends Main
                 sleep(1); // Wait for 1 seconds before checking again
             }
         } catch (Exception $err) {
-            $this->Error("External server (reoon) is not responding. Failed to retrieve results. Please try later.");
+            $display_error = "External server (reoon) is not responding. Failed to retrieve results. Please try later.";
+            $this->Error($display_error, "$display_error<br>$err");
         }
 
         //creating it
@@ -175,7 +191,8 @@ class Checker extends Main
         $stmt->close();
 
         if ($checkRow == 0) {
-            $this->Error("No such file with this id exists.");
+            $display_error = "No such file with this id exists.";
+            $this->Error($display_error, "$display_error<br>Failed to download: $id");
         }
 
         if ($resultAssoc["method"] == "File" && ($resultAssoc["temp"] != "none")) {
@@ -189,7 +206,8 @@ class Checker extends Main
 
             //handling error
             if ($csv == false) {
-                $this->Error("Your csv file doesn't exist.");
+                $display_error = "Your csv file doesn't exist.";
+                $this->Error($display_error, "$display_error<br>Failed to retrieve file with id: $id");
             }
 
             //handling file and pushing data
@@ -226,7 +244,8 @@ class Checker extends Main
 
             if ($csvFile == false) {
                 unlink($url);
-                $this->Error("Your result file doesn't exist.");
+                $display_error = "Your result file doesn't exist.";
+                $this->Error($display_error, "$display_error<br>Failed to retrieve file with id: $id");
             }
 
             $json = json_decode($csvFile);
@@ -276,7 +295,7 @@ class Checker extends Main
 
             header("content-type: application/csv");
             header("Content-Disposition: attachment; filename=$id.csv");
-            
+
             echo $file;
 
         } else {
@@ -285,7 +304,8 @@ class Checker extends Main
             $json = @file_get_contents($resultAssoc["url"]);
 
             if ($json == false) {
-                $this->Error("Your result file doesn't exist.");
+                $display_error = "Your result file doesn't exist.";
+                $this->Error($display_error, "$display_error<br>Failed to retrieve file with id: $id");
             }
 
             $data = json_decode($json);
@@ -332,7 +352,7 @@ class Checker extends Main
         $num = $result->num_rows;
         //if exists
         if ($num == 0) {
-            $this->Error("Nothing found");
+            $this->Error("Nothing found.", null);
         }
         //getting data
         while ($row = $result->fetch_assoc()) {

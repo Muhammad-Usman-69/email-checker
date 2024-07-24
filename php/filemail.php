@@ -45,7 +45,7 @@ if (end($nameArr) != "csv") {
 $csv = fopen($fileTmpName, "r");
 
 //handling file and pushing data
-while (($data = fgetcsv($csv, 2000)) !== FALSE) {
+while (($data = fgetcsv($csv, 200000)) !== FALSE) {
     $rows[] = $data;
 }
 
@@ -107,7 +107,7 @@ $fp = fopen($temp, "w");
 fwrite($fp, $csv);
 fclose($fp);
 
-$obj->saveToDb($id, $task_id, "File", $result["url"], $temp);
+$obj->saveToDb($result["id"], $task_id, "File", $result["url"], $temp);
 $obj->increaseUse($count);
 
 echo json_encode($result, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);

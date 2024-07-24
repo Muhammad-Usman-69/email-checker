@@ -66,8 +66,14 @@ async function submitData(endpoint, data) {
     document.getElementById("result").classList.add("hidden");
     document.getElementById("download-form").classList.add("hidden");
 
+    //disabling from submitting request again
+    document.querySelectorAll(".submit-button").forEach(button => {
+        button.classList.add("cursor-not-allowed");
+        button.disabled = true;
+    })
+
     //changing info container
-    changeInfoContainer("Request has been sent.", "green", "009933");
+    changeInfoContainer("Request has been sent. It may take a while (upto 10 mins) to process. Don't refresh.", "green", "009933");
 
     let res = await fetch(endpoint, {
         method: "POST",
@@ -80,6 +86,12 @@ async function submitData(endpoint, data) {
 }
 
 async function loadData(data) {
+    //enabling from submitting request again
+    document.querySelectorAll(".submit-button").forEach(button => {
+        button.classList.remove("cursor-not-allowed");
+        button.disabled = false;
+    })
+
     if (data.error != undefined) {
         //changing info container
         changeInfoContainer(data.error, "red", "ff0000");
@@ -166,6 +178,7 @@ async function history() {
     let data = await res.json();
 
     if (data.error != undefined) {
+        changeInfoContainer(data.error + " Can't show history.", "red", "ff0000");
         return;
     }
 
@@ -299,7 +312,7 @@ function showMultipleHistory(container, id, time) {
 function changeInfoContainer(message, color, fill) {
     document.getElementById("info-container").innerHTML =
         `<div class="rounded-md bg-${color}-200 border-${color}-700 border flex items-center space-x-2 p-2">
-        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" style="width: 24px; min-width: 24px" viewBox="0 0 48 48">
             <path fill="#${fill}"
                 d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
             </path>

@@ -1,6 +1,6 @@
 <?php
 
-require "Checker.php";
+require "./Main.php";
 
-$obj = new Checker();
+$obj = new Main();
 $obj->resetUse();

@@ -48,8 +48,8 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
                 <input name="email" id="single-email" type="email" placeholder="example@example.com"
                     class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 w-full" minlength="12"
                     required>
-                <button type="submit"
-                    class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
+                <button type="submit" id="single-button"
+                    class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3 submit-button">Submit</button>
             </form>
         </div>
 
@@ -65,7 +65,7 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
                         class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 resize-none w-full"
                         required>
                     <button type="submit"
-                        class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
+                        class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3 submit-button">Submit</button>
                 </div>
             </form>
         </div>
@@ -79,13 +79,13 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
                         class="bg-white rounded-l-md outline-none border border-[#1F2937] py-2 px-3 resize-none w-full"
                         rows="5" required minlength="12" placeholder></textarea>
                     <button type="submit"
-                        class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3">Submit</button>
+                        class="bg-[#1F2937] border border-[#1F2937] rounded-r-md text-white outline-none py-2 px-3 submit-button">Submit</button>
                 </div>
             </form>
 
             <div id="info-container">
                 <div class="rounded-md bg-blue-200 border-blue-700 border flex items-center space-x-2 p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" viewBox="0 0 48 48">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 48 48" style="width: 24px; min-width: 24px">
                         <path fill="#2196f3"
                             d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z">
                         </path>
@@ -147,13 +147,14 @@ if (!isset($_SESSION["allow"]) || $_SESSION["allow"] != true) {
         <p class="text-center py-4">Email Checker | &copy; 2024 All Rights Reserved</p>
     </footer>
 
-    <div id="dummy" class="border-red-700 bg-red-200 text-red-600 border-green-700 bg-green-200 text-green-600"></div>
+    <div id="dummy" class="hidden border-red-700 bg-red-200 text-red-600 border-green-700 bg-green-200 text-green-600"></div>
 
     <script src="side/dev.js"></script>
     <script>
         document.getElementById("multiple-email").placeholder =
             "example@example.com\nexample@example.com\nexample@example.com\nexample@example.com\nexample@example.com";
     </script>
+    
 </body>
 
 </html>

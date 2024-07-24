@@ -263,9 +263,15 @@ function showSingleHistory(container, id, time, url) {
 }
 
 async function showMultipleHistoryData(id, url) {
+    let data;
+
     //fetching email and status from res
-    const res = await fetch(url);
-    const data = await res.json();
+    try {
+        const res = await fetch(url);
+        data = await res.json();
+    } catch (err) {
+        return;
+    }
 
     const email = data["email"];
     const status = data["status"];

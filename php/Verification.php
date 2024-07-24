@@ -1,6 +1,6 @@
 <?php
 
-require "Checker.php";
+require "Main.php";
 require_once './PHPMailer/Exception.php';
 require_once './PHPMailer/PHPMailer.php';
 require_once './PHPMailer/SMTP.php';
@@ -10,9 +10,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class Verification extends Checker
+class Verification extends Main
 {
-
     function verifyPass($pass)
     {
         $sql = "SELECT * FROM `tuple` WHERE `id` = 1";

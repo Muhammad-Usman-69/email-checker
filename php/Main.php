@@ -4,7 +4,6 @@ require_once "config.php";
 
 class Main {
     protected $conn;
-    protected $error = false;
     protected $dailyUse;
 
     function __construct()
@@ -23,32 +22,15 @@ class Main {
         try {
             $this->conn = new mysqli($server, $user, $pass, $db);
         } catch (Exception $err) {
-            $this->Error("Connection failed. Please try later.");
+            $this->Error("Internal connection failed.");
         }
     }
 
     protected function Error($err)
     {
-        $this->error = $err;
-        echo json_encode(["error" => $this->error]);
+        header("content-type: application/json");
+        echo json_encode(["error" => $err]);
         exit();
-    }
-
-    function getResults()
-    {
-        try {
-            $sql = "SELECT * FROM `tools`";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while ($row = $result->fetch_assoc()) {
-                $names[] = $row;
-            }
-            $stmt->close();
-            return $names;
-        } catch (Exception $err) {
-            $this->Error("Database connection failed.");
-        }
     }
 
     function random_str(
@@ -80,7 +62,6 @@ class Main {
         }
         return $str;
     }
-
 
     function delete($until)
     {
@@ -162,5 +143,4 @@ class Main {
         $stmt->close();
         echo "reset successful";
     }
-
 }

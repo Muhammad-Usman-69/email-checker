@@ -1,0 +1,81 @@
+{
+    "count_checked": 3,
+    "count_total": 3,
+    "name": "API: Title Not Provided",
+    "progress_percentage": 100.0,
+    "results": {
+        "chad@beyondfoam.ca": {
+            "can_connect_smtp": true,
+            "domain": "vasomly.com",
+            "email": "chad@beyondfoam.ca",
+            "has_inbox_full": false,
+            "is_catch_all": false,
+            "is_deliverable": true,
+            "is_disabled": false,
+            "is_disposable": true,
+            "is_free_email": false,
+            "is_role_account": false,
+            "is_safe_to_send": false,
+            "is_spamtrap": false,
+            "is_valid_syntax": true,
+            "mx_accepts_mail": true,
+            "mx_records": [
+                "mail.vasomly.com"
+            ],
+            "overall_score": "30",
+            "status": "disposable",
+            "username": "ciyeyas315"
+        },
+        "mhobalsteel@gmail.com": {
+            "can_connect_smtp": true,
+            "domain": "molecule.ink",
+            "email": "mhobalsteel@gmail.com",
+            "has_inbox_full": false,
+            "is_catch_all": true,
+            "is_deliverable": true,
+            "is_disabled": false,
+            "is_disposable": true,
+            "is_free_email": false,
+            "is_role_account": false,
+            "is_safe_to_send": false,
+            "is_spamtrap": false,
+            "is_valid_syntax": true,
+            "mx_accepts_mail": true,
+            "mx_records": [
+                "mx4.arrivalserver.com",
+                "srv4.arrivalserver.net"
+            ],
+            "overall_score": "22",
+            "status": "disposable",
+            "username": "lubivuty"
+        },
+        "info@meerkatroofing.ca": {
+            "can_connect_smtp": true,
+            "domain": "gmail.com",
+            "email": "info@meerkatroofing.ca",
+            "has_inbox_full": false,
+            "is_catch_all": false,
+            "is_deliverable": true,
+            "is_disabled": false,
+            "is_disposable": false,
+            "is_free_email": true,
+            "is_role_account": false,
+            "is_safe_to_send": true,
+            "is_spamtrap": false,
+            "is_valid_syntax": true,
+            "mx_accepts_mail": true,
+            "mx_records": [
+                "alt3.gmail-smtp-in.l.google.com",
+                "alt2.gmail-smtp-in.l.google.com",
+                "alt4.gmail-smtp-in.l.google.com",
+                "alt1.gmail-smtp-in.l.google.com",
+                "gmail-smtp-in.l.google.com"
+            ],
+            "overall_score": "98",
+            "status": "safe",
+            "username": "usmansaleem4446996"
+        }
+    },
+    "status": "completed",
+    "task_id": "717714"
+}

@@ -45,7 +45,7 @@ if (end($nameArr) != "csv") {
 $csv = fopen($fileTmpName, "r");
 
 //handling file and pushing data
-while (($data = fgetcsv($csv, 200000)) !== FALSE) {
+while (($data = fgetcsv($csv, 2000)) !== FALSE) {
     $rows[] = $data;
 }
 

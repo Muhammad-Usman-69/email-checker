@@ -1,3 +1,5 @@
+document.addEventListener("load", history());
+
 //for single email
 document.getElementById("single-email-form").addEventListener("submit", (e) => {
     //preventing submission
@@ -177,8 +179,19 @@ async function history() {
     let res = await fetch("./php/history.php");
     let data = await res.json();
 
-    if (data.error != undefined) {
-        changeInfoContainer(data.error + " Can't show history.", "red", "ff0000");
+    if (data.error != undefined && data.error.includes("connection")) {
+        //if database connection error
+        changeInfoContainer(data.error, "red", "ff0000");
+
+        //disabling from submitting request
+        document.querySelectorAll(".submit-button").forEach(button => {
+            button.classList.add("cursor-not-allowed");
+            button.disabled = true;
+        })
+
+        return;
+    } else if (data.error != undefined) {
+        //if no history
         return;
     }
 
@@ -205,8 +218,6 @@ async function history() {
         showMultipleHistory(container, id, time);
     })
 }
-
-document.addEventListener("load", history());
 
 //showing single history email
 function showSingleHistoryEmail(id) {

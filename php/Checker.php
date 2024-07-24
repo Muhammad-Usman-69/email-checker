@@ -71,7 +71,7 @@ class Checker extends Main
                 "check" => "single"
             ];
         } catch (Exception $err) {
-            $this->Error("External server is (reoon) not responding. Please try later.");
+            $this->Error("External server (reoon) is not responding. Please try later.");
         }
     }
 
@@ -88,7 +88,7 @@ class Checker extends Main
                 ]
             ]);
         } catch (Exception $err) {
-            $this->Error("External server is (reoon) not responding. Please try later.");
+            $this->Error("External server (reoon) is not responding. Please try later.");
         }
 
         //check if success
@@ -131,7 +131,7 @@ class Checker extends Main
                 sleep(1); // Wait for 1 seconds before checking again
             }
         } catch (Exception $err) {
-            $this->Error("External server is (reoon) not responding. Failed to retrieve results. Please try later.");
+            $this->Error("External server (reoon) is not responding. Failed to retrieve results. Please try later.");
         }
 
         //creating it
@@ -155,82 +155,139 @@ class Checker extends Main
         ];
     }
 
+    function writeRow($fp, $row)
+    {
+        foreach ($row as $column) {
+            fwrite($fp, "\"$column\",");
+        }
+    }
+
     function download($id, $status)
     {
         //check if exist
-        try {
-            $sql = "SELECT * FROM `checks` WHERE `check_id` = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("s", $id);
-            $stmt->execute();
-            $checkResult = $stmt->get_result();
-            $checkRow = $checkResult->num_rows;
-            $resultAssoc = $checkResult->fetch_assoc();
-            $stmt->close();
+        $sql = "SELECT * FROM `checks` WHERE `check_id` = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        $checkResult = $stmt->get_result();
+        $checkRow = $checkResult->num_rows;
+        $resultAssoc = $checkResult->fetch_assoc();
+        $stmt->close();
 
-            if ($checkRow == 0) {
-                $this->Error("No such file exists");
-            }
-        } catch (Exception $err) {
-            $this->Error("Couldn't save file. Please try later.");
+        if ($checkRow == 0) {
+            $this->Error("No such file with this id exists.");
         }
 
-        // if csv
         if ($resultAssoc["method"] == "File" && ($resultAssoc["temp"] != "none")) {
+            // if csv
 
-            $rows = "";
+            $i = 0; //for increamenting
+            $indexFound = false;  //for email index status
+            $emailIndex = 0;  //for email index
 
-            //opening file for read
-            $csv = fopen($resultAssoc["temp"], "r");
+            $csv = @fopen($resultAssoc["temp"], "r"); //opening file for read
+
+            //handling error
+            if ($csv == false) {
+                $this->Error("Your csv file doesn't exist.");
+            }
 
             //handling file and pushing data
-            while (($data = fgetcsv($csv, 200000, ",")) !== FALSE) {
+            while (($data = fgetcsv($csv, 2000, ",")) !== FALSE) {
                 $csvRows[] = $data;
             }
 
-            // getting each row data as a single string
-            foreach ($csvRows as $csvRow) {
-                $str_row = "";
-                foreach ($csvRow as $csvColumn) {
-                    $str_row .= "$csvColumn,";
+            fclose($csv); //closing read file
+
+            //creating temp file url for download
+            $url = "../v1/temp/download" . $this->random_num(5) . ".csv";
+
+            //opening url writing headers to it
+            $fp = fopen($url, "w+");
+
+            foreach ($csvRows[0] as $header) {
+                fwrite($fp, "\"$header\",");
+
+                //taking email index
+                if (($header == "email" || $header == "EMAIL" || $header == "Email") && $indexFound == false) {
+                    $indexFound = true;
+                    $emailIndex = $i;
                 }
-                $str_rows[] = $str_row;
+                $i++;
             }
 
-            $headers = $str_rows[0] . "Status\n";
+            $i = 0; //marking it as zero
 
-            $str_rows = array_reverse($str_rows); // reversing array
+            //writing status and then ending the line
+            fwrite($fp, "\"Status\"\n");
 
             // now getting json file
-            $json = json_decode(file_get_contents($resultAssoc["url"]));
+            $csvFile = @file_get_contents($resultAssoc["url"]);
+
+            if ($csvFile == false) {
+                unlink($url);
+                $this->Error("Your result file doesn't exist.");
+            }
+
+            $json = json_decode($csvFile);
             $stdResult = $json->{"results"};
             $results = get_object_vars($stdResult); //getting object keys
 
-            //looping through str row and matching each with result
-            foreach ($results as $result) {
-                $email = $result->{"email"};
-                $emailStatus = $result->{"status"};
-                $emailFound = false;
 
-                foreach ($str_rows as $str_row) {
+            //looping through rows and matching each with results
+            foreach ($csvRows as $row) {
+
+                foreach ($results as $result) {
+                    $email = $result->{"email"};
+                    $emailStatus = $result->{"status"};
+                    $emailFound = false;
 
                     //check if found
-                    if (str_contains($str_row, $email) && $emailFound == false) {
+                    if (str_contains($row[$emailIndex], $email) && $emailFound == false) {
 
-                        //pushing safe
+                        //writing row and then its status and ending it
                         if (($emailStatus == "safe" || $emailStatus == "valid") && $status != "all") {
-                            $rows .= $str_row . ucwords($emailStatus) . "\n";
+                            $this->writeRow($fp, $row);
+                            fwrite($fp, "\"$emailStatus\"\n");
                         }
+
                         //pushing to rows if all
                         if ($status == "all") {
-                            $rows .= $str_row . ucwords($emailStatus) . "\n";
+                            $this->writeRow($fp, $row);
+                            fwrite($fp, "\"$emailStatus\"\n");
                         }
                     }
                 }
+
+                if ($i != 0 && $status == "all") {
+                    $this->writeRow($fp, $row);
+                    fwrite($fp, "\"Not Found\"\n");
+                }
+
+                $i++;
             }
+
+            //closing file
+            fclose($fp);
+
+            //getting file, echoing and deleting temp file
+            $file = file_get_contents($url);
+            unlink($url);
+
+            header("content-type: application/csv");
+            header("Content-Disposition: attachment; filename=$id.csv");
+            
+            echo $file;
+
         } else {
+
             // if multiple
-            $json = file_get_contents($resultAssoc["url"]);
+            $json = @file_get_contents($resultAssoc["url"]);
+
+            if ($json == false) {
+                $this->Error("Your result file doesn't exist.");
+            }
+
             $data = json_decode($json);
 
             $headers = "Email,Status\n"; // "," seperate the column
@@ -256,14 +313,14 @@ class Checker extends Main
                     $rows .= "$email," . ucwords($emailStatus) . "\n";
                 }
             }
+
+            header("content-type: application/csv");
+            header("Content-Disposition: attachment; filename=$id.csv");
+
+            //ecohing result
+            echo $headers;
+            echo $rows;
         }
-
-        header("content-type: application/csv");
-        header("Content-Disposition: attachment; filename=$id.csv");
-
-        //ecohing result
-        echo $headers;
-        echo $rows;
     }
 
     function history()

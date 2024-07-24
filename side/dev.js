@@ -74,6 +74,8 @@ async function submitData(endpoint, data) {
         button.disabled = true;
     })
 
+    closeTab(false); //disabling to close tab
+
     //changing info container
     changeInfoContainer("Request has been sent. It may take a while (upto 10 mins) to process. Don't refresh.", "green", "009933");
 
@@ -88,6 +90,8 @@ async function submitData(endpoint, data) {
 }
 
 async function loadData(data) {
+    closeTab(true); //enabling to close tab
+
     //enabling from submitting request again
     document.querySelectorAll(".submit-button").forEach(button => {
         button.classList.remove("cursor-not-allowed");
@@ -340,3 +344,14 @@ function changeInfoContainer(message, color, fill) {
         <p class="text-${color}-600 font-semibold">${message}</p>
     </div>`;
 }
+
+function closeTab(value) {
+    const boolean = value;
+    window.onbeforeunload = function (event) {
+        if (!boolean) {
+            return "Do you really want to close?";
+        }
+    };
+}
+
+closeTab(true);

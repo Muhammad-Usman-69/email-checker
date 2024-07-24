@@ -1,5 +1,5 @@
 <?php
-
+// exit();
 require "./Main.php";
 require_once "../vendor/autoload.php";
 
@@ -65,16 +65,6 @@ class Checker extends Main
             $fp = fopen($url, "w");
             fwrite($fp, $responseData);
             fclose($fp);
-
-            //opening for reading error
-            $file = fopen($url, "r");
-            $json = json_decode($file);
-            if ($json->{"status"} != "success") {
-                fclose($file);
-                $display_error = "Request failed to proceed, please try later.";
-                $this->Error($display_error, $display_error);
-            }
-            fclose($file);
 
             return [
                 "status" => "success",
@@ -252,9 +242,9 @@ class Checker extends Main
             $stdResult = $json->{"results"};
             $results = get_object_vars($stdResult); //getting object keys
 
-
             //looping through rows and matching each with results
             foreach ($csvRows as $row) {
+                $rowFound = false;
 
                 foreach ($results as $result) {
                     $email = $result->{"email"};
@@ -275,10 +265,14 @@ class Checker extends Main
                             $this->writeRow($fp, $row);
                             fwrite($fp, "\"$emailStatus\"\n");
                         }
+
+                        $emailFound = true;
+                        $rowFound = true;
                     }
                 }
 
-                if ($i != 0 && $status == "all") {
+                //hiding first row and showing not found rows in all
+                if ($i != 0 && $status == "all" && $rowFound == false) {
                     $this->writeRow($fp, $row);
                     fwrite($fp, "\"Not Found\"\n");
                 }

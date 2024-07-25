@@ -84,14 +84,15 @@ foreach ($rows as $row) {
 
 fclose($csv);
 
+$count = count($emails);
+
 //making limit to email
 $limit = ONETIMELIMIT;
-if (count($emails) > $limit) {
+
+if ($count > $limit) {
     echo json_encode(["error" => "Email limit exceeded. Can't be more than $limit."]);
     exit();
 }
-
-$count = count($emails);
 
 $obj = new Checker();
 

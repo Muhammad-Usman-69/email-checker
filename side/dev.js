@@ -236,9 +236,9 @@ function showSingleHistory(container, id, time, url) {
         class="space-y-2 border-[#1F2937] border border-b-0 last:border-b bg-white p-2 first:rounded-t-md last:rounded-b-md">
         <div class="flex items-center justify-between">
             <div class="text-base mx-2">
-                <p class="font-semibold space-x-2.5">
+                <p class="font-semibold flex flex-col md:flex-row md:space-x-2.5">
                     <span>${id}</span>
-                    <span>-</span>
+                    <span class="hidden md:block">-</span>
                     <span>${time}</span>
                 </p>
             </div>
@@ -312,9 +312,9 @@ function showMultipleHistory(container, id, time, url) {
         if (temp_url.length > 70) {
             const firstStr = temp_url.substr(0, 20);
             const lastStr = temp_url.substr(-20);
-            temp = `<span>-</span> <span>${firstStr} ......... ${lastStr}</span>`;
+            temp = `<span class="hidden md:block">-</span> <span>${firstStr} ......... ${lastStr}</span>`;
         } else {
-            temp = "<span>-</span> <span>" + temp_url + "</span>";
+            temp = `<span class="hidden md:block">-</span> <span>${temp_url}</span>`;
         }
 
     }
@@ -323,9 +323,9 @@ function showMultipleHistory(container, id, time, url) {
         `<div
         class="flex items-center justify-between border-[#1F2937] border border-b-0 last:border-b bg-white p-2 first:rounded-t-md last:rounded-b-md">
         <div class="text-base mx-2">
-            <p class="font-semibold space-x-2.5">
+            <p class="font-semibold flex flex-col md:flex-row md:space-x-2.5">
                 <span>${id}</span>
-                <span>-</span>
+                <span class="hidden md:block">-</span>
                 <span>${time}</span>
                 ${temp}
             </p>

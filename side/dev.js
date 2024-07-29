@@ -211,6 +211,7 @@ async function history() {
         let time = history.time;
         let method = history.method;
         let url = history.url;
+        let temp = history.temp;
 
         //if single method
         if (method == "Single") {
@@ -219,7 +220,7 @@ async function history() {
         }
 
         //if multiple method
-        showMultipleHistory(container, id, time);
+        showMultipleHistory(container, id, time, temp);
     })
 }
 
@@ -300,7 +301,24 @@ async function showMultipleHistoryData(id, url) {
         </div>`;
 }
 
-function showMultipleHistory(container, id, time) {
+function showMultipleHistory(container, id, time, url) {
+    let temp = "";
+
+    //check if file temp available
+    if (url != "none") {
+        let temp_url = url.split("/").pop();
+
+        //editing url
+        if (temp_url.length > 70) {
+            const firstStr = temp_url.substr(0, 20);
+            const lastStr = temp_url.substr(-20);
+            temp = `<span>-</span> <span>${firstStr} ......... ${lastStr}</span>`;
+        } else {
+            temp = "<span>-</span> <span>" + temp_url + "</span>";
+        }
+
+    }
+
     container.innerHTML +=
         `<div
         class="flex items-center justify-between border-[#1F2937] border border-b-0 last:border-b bg-white p-2 first:rounded-t-md last:rounded-b-md">
@@ -309,6 +327,7 @@ function showMultipleHistory(container, id, time) {
                 <span>${id}</span>
                 <span>-</span>
                 <span>${time}</span>
+                ${temp}
             </p>
         </div>
         <form action="php/download.php" class="flex items-center space-x-2" id="download-form" method="post"

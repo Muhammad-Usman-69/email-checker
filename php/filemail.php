@@ -94,6 +94,8 @@ if ($count > $limit) {
     exit();
 }
 
+$i = 1;
+
 $obj = new Checker();
 
 $obj->checkUse($count);
@@ -101,8 +103,24 @@ $task_id = $obj->multipleCheck($emails, API);
 $obj->saveTask($task_id);
 $result = $obj->getMultipleResults($task_id, API);
 
-// saving csv in temp folder
-$temp = "../v1/temp/temp" . $result["num"] . ".csv";
+// creating csv path in temp folder
+$temp = "../v1/temp/$fileName";
+
+//check if exists
+$file = @file_get_contents($temp);
+
+if ($file == true) {
+    while (true) {
+        $temp = "../v1/temp/$nameArr[0] ($i).$nameArr[1]"; //checking path
+        $file = @file_get_contents($temp); //again checking
+        if ($file == false) {
+            break;
+        }
+        $i++; //increamenting
+    }
+}
+
+//saving now
 $csv = file_get_contents($fileTmpName);
 $fp = fopen($temp, "w");
 fwrite($fp, $csv);

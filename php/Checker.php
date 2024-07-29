@@ -141,8 +141,7 @@ class Checker extends Main
         }
 
         //creating it
-        $num = $this->random_num(4);
-        $id = "check$num";
+        $id = "check" . $this->random_num(4);
 
         //getting url
         $url = "../v1/json/$id.json";
@@ -155,7 +154,6 @@ class Checker extends Main
         return [
             "status" => "success",
             "id" => $id,
-            "num" => $num,
             "url" => $url,
             "check" => "multiple"
         ];
@@ -339,7 +337,7 @@ class Checker extends Main
 
     function history()
     {
-        $sql = "SELECT * FROM `checks` ORDER BY `checks`.`time` ASC";
+        $sql = "SELECT * FROM `checks` ORDER BY `checks`.`time` DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -354,11 +352,13 @@ class Checker extends Main
             $time = $row["time"];
             $method = $row["method"];
             $url = $row["url"];
+            $temp = $row["temp"];
             $arr[] = [
                 "id" => $id,
                 "time" => $time,
                 "method" => $method,
-                "url" => $url
+                "url" => $url,
+                "temp" => $temp
             ];
         }
         ;
